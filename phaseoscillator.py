@@ -13,47 +13,87 @@ class phaseoscillators:
         self.omega = numpy.zeros(self.N)
 
     def printinfos(self):
-        print(f'Number of Phase Oscillators: {self.N}\n')
+        print(f'Number of Phase Oscillators: {self.N}')
         print(f'Start Time set at {self.time_start}\nEnd Time set at {self.time_end}')
-        print(f'Initial conditions are: {self.initialvalues}\nNatural frequencies are: {self.omega}\nk: {self.k}')
+        print(f'Initial conditions are: {self.initialvalues}\nNatural frequencies are: {self.omega}\nCoupling constant is: {self.k}\n')
 
     def settimes(self, time_start, time_end, time_points):
         self.time_start = time_start
         self.time_end = time_end
         self.times = numpy.linspace(self.time_start, self.time_end, time_points)
 
-    def setinitialconditions(self):
-        for i in numpy.arange(self.N):
+    def setinitialconditions(self, random_k=True):
+        for i in range(self.N):
             self.initialvalues[i] = 2*numpy.pi*random.random()
-            self.omega[i] = 5.*random.random()
+        return self.initialvalues
+
+    def setmodelconstants(self, random_k=True):    
+        if random_k == True:
             self.k = random.random()
+        elif random_k == False:
+            self.k = float(input('Choose the coupling constant (0 to 1): '))
+
+        r = float(input('Choose the maximum numbers of radians per second: '))
+        for i in range(self.N):
+            self.omega[i] = r*random.random()
+        
+        return self.k, self.omega
 
     def phaseoscillators_fun(self, x, t):
-        theta0 = x[0]
-        theta1 = x[1]
-        theta2 = x[2]
+        self.variables = {}
+        for i in range(self.N):
+            self.variables[f'theta{i}'] = x[i]
 
-        self.dtheta0dt = self.omega[0] + self.k/self.N*numpy.sin(theta1 - theta0) + self.k/self.N*numpy.sin(theta2 - theta0)
-        self.dtheta1dt = self.omega[1] + self.k/self.N*numpy.sin(theta0 - theta1) + self.k/self.N*numpy.sin(theta2 - theta1)
-        self.dtheta2dt = self.omega[2] + self.k/self.N*numpy.sin(theta1 - theta2) + self.k/self.N*numpy.sin(theta1 - theta2)
+        self.dthetadt = []
+        for i in range(self.N):
+            self.dthetadt.append(self.omega[i] + self.k/self.N*sum(numpy.sin(self.variables[f'theta{j}'] - self.variables[f'theta{i}']) for j in range(self.N)))
 
-        return [self.dtheta0dt, self.dtheta1dt, self.dtheta2dt]
+        return self.dthetadt
 
     def evolve(self, function):
         self.phaseoscillators_evo = odeint(function, self.initialvalues, self.times)
+        return self.phaseoscillators_evo
+
+    def findorderparameter(self, phases):
+        self.orderparameter = []
+        for i in range(len(self.times)):
+            self.orderparameter.append( 1/self.N * sum(numpy.exp(complex(0,phases[i,j]))  for j in range(self.N)) )
+
+        self.sync = []
+        for i in range(len(self.orderparameter)):
+            self.sync.append( numpy.sqrt(numpy.real(self.orderparameter[i])**2 + numpy.imag(self.orderparameter[i])**2) )
+        
+        return self.sync
+
+    def printsyncparam(self):
+        plt.figure(f'{self.N} Oscillators Sync')
+        plt.title(f'Sync param for {self.N} oscillators; k={self.k}')
+        plt.plot(self.times, self.sync)
+        plt.xlabel('time')
+        plt.ylabel('R')
+        plt.ylim([0.,1.])
+        plt.yticks(numpy.arange(0, 1.1, step=0.1))
 
     def printpolar(self):
-        plt.polar(self.times, self.phaseoscillators_evo[:,0], label=f'theta0, k={self.k}')
-        plt.polar(self.times, self.phaseoscillators_evo[:,1], label=f'theta1, k={self.k}')
-        plt.polar(self.times, self.phaseoscillators_evo[:,2], label=f'theta2, k={self.k}')
+        plt.figure(f'{self.N} Oscillators')
+        for i in range(self.N):
+            plt.polar(self.times, self.phaseoscillators_evo[:,i], label=f'Theta {i}')
         plt.legend()
+    
+    def showplots(self):
         plt.show()
 
 
-threeoscillators = phaseoscillators(3)
-threeoscillators.settimes(0., 10., 1000)
-threeoscillators.setinitialconditions()
-threeoscillators.printinfos()
+thetas = phaseoscillators(15)
+thetas.settimes(0., 10., 1000)
+init_val = thetas.setinitialconditions()
+coupconstant, natfreq = thetas.setmodelconstants(random_k=True)
+thetas.printinfos()
 
-threeoscillators.evolve(threeoscillators.phaseoscillators_fun)
-threeoscillators.printpolar()
+equations = thetas.phaseoscillators_fun
+phasesevolution = thetas.evolve(equations)
+sync = thetas.findorderparameter(phasesevolution)
+
+thetas.printpolar()
+thetas.printsyncparam()
+thetas.showplots()
