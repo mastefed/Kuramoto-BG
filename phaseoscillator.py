@@ -5,6 +5,7 @@ class phaseoscillators:
         self.omega = numpy.zeros(self.N)
 
     def printinfos(self):
+        # You can call it after initializing initial conditions and start/end times!
         print(f'Number of Phase Oscillators: {self.N}')
         print(f'Start Time set at {self.time_start}\nEnd Time set at {self.time_end}')
         print(f'Initial conditions are: {self.initialvalues}\nNatural frequencies are: {self.omega}\nCoupling constant is: {self.k}\n')
@@ -17,7 +18,7 @@ class phaseoscillators:
 
     def setinitialconditions(self):
         for i in range(self.N):
-            self.initialvalues[i] = 2*numpy.pi*random.random()
+            self.initialvalues[i] = 2*numpy.pi*random.random() # random conditions of phases between 0 and 2pi
         return self.initialvalues
 
     def setmodelconstants(self, random_k=True):    
@@ -27,20 +28,20 @@ class phaseoscillators:
             self.k = float(input('Choose the coupling constant: '))
 
         for i in range(self.N):
-            self.omega[i] = random.gammavariate(9., .5)
+            self.omega[i] = random.gammavariate(9., .5) # natural frequencies from gamma distribution, this can be changed
         
         return self.k, self.omega
 
     def phaseoscillators_fun(self, x, t):
         self.variables = {}
         for i in range(self.N):
-            self.variables[f'theta{i}'] = x[i]
+            self.variables[f'theta{i}'] = x[i] # gets an array of phases' value at time t_k, odeint update the values everytime for evert t_j
 
-        self.dthetadt = []
+        self.dthetadt = [] # Creates and updates the values' array with the desired differential equations
         for i in range(self.N):
             self.dthetadt.append(self.omega[i] + self.k/self.N*sum(numpy.sin(self.variables[f'theta{j}'] - self.variables[f'theta{i}']) for j in range(self.N)))
 
-        return self.dthetadt
+        return self.dthetadt # returns the function to be put in .evolve()
 
     def evolve(self, function):
         self.phaseoscillators_evo = odeint(function, self.initialvalues, self.times)
@@ -49,13 +50,13 @@ class phaseoscillators:
     def findorderparameter(self, phases):
         self.orderparameter = []
         for i in range(len(self.times)):
-            self.orderparameter.append( 1/self.N * sum(numpy.exp(complex(0,phases[i,j]))  for j in range(self.N)) )
+            self.orderparameter.append(1/self.N * sum(numpy.exp(complex(0,phases[i,j]))  for j in range(self.N)))
 
         self.sync = []
         for i in range(len(self.orderparameter)):
             self.sync.append( numpy.sqrt(self.orderparameter[i].real**2 + self.orderparameter[i].imag**2) )
         
-        return self.sync, self.orderparameter
+        return self.sync, self.orderparameter # returns |Z| and Z, both can be useful
 
     def printsyncparam(self):
         plt.figure(f'{self.N} Oscillators Sync')
@@ -66,13 +67,13 @@ class phaseoscillators:
         plt.ylim([0.,1.])
         plt.yticks(numpy.arange(0, 1.1, step=0.1))
 
-    def printpolar(self):
+    def printpolar(self): # Prints a polar plot which can be used to see the evolution of phases
         plt.figure(f'{self.N} Oscillators')
         plt.suptitle(f'Sync param for {self.N} oscillators; k={self.k}')
         for i in range(self.N):
             plt.polar(self.times, self.phaseoscillators_evo[:,i], label=f'Theta {i}')
 
-    def animate_function(self, i):
+    def animate_function(self, i): 
         self.phases = self.phaseoscillators_evo[i:i+1]
         self.timestep = self.times[0:i]
         self.R = self.sync[0:i]
@@ -132,7 +133,7 @@ class phaseoscillators:
     def saveanimation(self, myanimation, save_path):
         print('Video Processing...')
         Writer = animation.writers['ffmpeg']
-        writer = Writer(fps=30, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
+        writer = Writer(fps=15, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
         myanimation.save(save_path, writer=writer)
         print('Such done, very wow!')
 
@@ -140,22 +141,31 @@ import numpy
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random
+import argparse
 
 from scipy.integrate import odeint
 
-random.seed(42)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Tool to simulate an arbitrary number of Phase Oscillators.")
+    parser.add_argument('-savepath', help='Where would you save the animated evolution?', type=str)
+    parser.add_argument('-numosci', help='How many oscillators to simulate.', type=int)
+    parser.add_argument('-randk', help='Do you want K to be random?', type=bool, choices=[True,False])
+    args = parser.parse_args()
 
-number_of_oscillators = int(input('How many oscillators do you want to simulate?: '))
+    save_path = args.savepath
+    number_of_oscillators = args.numosci
+    random_k = args.randk
 
-thetas = phaseoscillators(number_of_oscillators)
-times = thetas.settimes(0., 10., 1000)
-init_val = thetas.setinitialconditions()
-coupconstant, natfreq = thetas.setmodelconstants(random_k=False)
+    random.seed(42)
 
-equations = thetas.phaseoscillators_fun
-phasesevolution = thetas.evolve(equations)
-sync, ordparam = thetas.findorderparameter(phasesevolution)
+    thetas = phaseoscillators(number_of_oscillators)
+    times = thetas.settimes(0., 10., 1000)
+    init_val = thetas.setinitialconditions()
+    coupconstant, natfreq = thetas.setmodelconstants(random_k=random_k)
 
-animazione = thetas.animateoscillators()
-save_path = f'C:/Users/feder/Desktop/{number_of_oscillators}phaseoscillatorsk{coupconstant}.mp4'
-thetas.saveanimation(animazione, save_path)
+    equations = thetas.phaseoscillators_fun
+    phasesevolution = thetas.evolve(equations)
+    sync, ordparam = thetas.findorderparameter(phasesevolution)
+
+    animazione = thetas.animateoscillators()
+    thetas.saveanimation(animazione, save_path)
