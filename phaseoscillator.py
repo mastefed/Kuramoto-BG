@@ -21,9 +21,9 @@ class phaseoscillators:
             self.initialvalues[i] = 2*numpy.pi*random.random() # random conditions of phases between 0 and 2pi
         return self.initialvalues
 
-    def setmodelconstants(self, random_k=True):    
+    def setmodelconstants(self, random_k):    
         if random_k == True:
-            self.k = random.random()
+            self.k = 10.*random.random()
         elif random_k == False:
             self.k = float(input('Choose the coupling constant: '))
 
@@ -133,7 +133,7 @@ class phaseoscillators:
     def saveanimation(self, myanimation, save_path):
         print('Video Processing...')
         Writer = animation.writers['ffmpeg']
-        writer = Writer(fps=15, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
+        writer = Writer(fps=30, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
         myanimation.save(save_path, writer=writer)
         print('Such done, very wow!')
 
@@ -149,19 +149,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Tool to simulate an arbitrary number of Phase Oscillators.")
     parser.add_argument('-savepath', help='Where would you save the animated evolution?', type=str)
     parser.add_argument('-numosci', help='How many oscillators to simulate.', type=int)
-    parser.add_argument('-randk', help='Do you want K to be random?', type=bool, choices=[True,False])
     args = parser.parse_args()
 
     save_path = args.savepath
     number_of_oscillators = args.numosci
-    random_k = args.randk
 
     random.seed(42)
 
     thetas = phaseoscillators(number_of_oscillators)
     times = thetas.settimes(0., 10., 1000)
     init_val = thetas.setinitialconditions()
-    coupconstant, natfreq = thetas.setmodelconstants(random_k=random_k)
+    coupconstant, natfreq = thetas.setmodelconstants(random_k=False)
 
     equations = thetas.phaseoscillators_fun
     phasesevolution = thetas.evolve(equations)
