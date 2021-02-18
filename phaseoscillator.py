@@ -28,7 +28,8 @@ class phaseoscillators:
             self.k = float(input('Choose the coupling constant: '))
 
         for i in range(self.N):
-            self.omega[i] = random.gammavariate(9., .5) # natural frequencies from gamma distribution, this can be changed
+            # self.omega[i] = random.gammavariate(9., .5) # natural frequencies from gamma distribution, this can be changed
+            self.omega[i] = random.gauss(0., 3.)
         
         return self.k, self.omega
 
@@ -157,7 +158,7 @@ if __name__ == "__main__":
     random.seed(42)
 
     thetas = phaseoscillators(number_of_oscillators)
-    times = thetas.settimes(0., 10., 1000)
+    times = thetas.settimes(0., 50., 5000)
     init_val = thetas.setinitialconditions()
     coupconstant, natfreq = thetas.setmodelconstants(random_k=False)
 
