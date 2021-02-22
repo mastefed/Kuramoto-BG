@@ -29,7 +29,7 @@ class phaseoscillators:
 
         for i in range(self.N):
             # self.omega[i] = random.gammavariate(9., .5) # natural frequencies from gamma distribution, this can be changed
-            self.omega[i] = random.gauss(0., 3.)
+            self.omega[i] = random.gauss(5., .5)
         
         return self.k, self.omega
 
@@ -38,9 +38,15 @@ class phaseoscillators:
         for i in range(self.N):
             self.variables[f'theta{i}'] = x[i] # gets an array of phases' value at time t_k, odeint update the values everytime for evert t_j
 
+        def interaction(num):
+            interaction_terms = 0.
+            for j in range(num):
+                interaction_terms += self.k/self.N*numpy.sin(self.variables[f'theta{j}'] - self.variables[f'theta{i}'])
+            return interaction_terms
+
         self.dthetadt = [] # Creates and updates the values' array with the desired differential equations
         for i in range(self.N):
-            self.dthetadt.append(self.omega[i] + self.k/self.N*sum(numpy.sin(self.variables[f'theta{j}'] - self.variables[f'theta{i}']) for j in range(self.N)))
+            self.dthetadt.append(self.omega[i] + interaction(self.N))
 
         return self.dthetadt # returns the function to be put in .evolve()
 
@@ -158,7 +164,7 @@ if __name__ == "__main__":
     random.seed(42)
 
     thetas = phaseoscillators(number_of_oscillators)
-    times = thetas.settimes(0., 50., 5000)
+    times = thetas.settimes(0., 10., 500)
     init_val = thetas.setinitialconditions()
     coupconstant, natfreq = thetas.setmodelconstants(random_k=False)
 
