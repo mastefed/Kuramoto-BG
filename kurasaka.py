@@ -4,6 +4,8 @@ class kurasaka_oscillators:
         self.N2 = num_subpop2
         self.N3 = num_subpop3
         self.N = self.N1 + self.N2 + self.N3
+        self.reproducible_rng = numpy.random.default_rng(42)
+        self.notreproducible_rng = numpy.random.default_rng()
 
     def settimes(self, time_start, time_end, time_points):
         self.time_start = time_start
@@ -14,35 +16,78 @@ class kurasaka_oscillators:
 
     def setinitialconditions(self, clustered):
         if clustered == False:
-            self.initialvalues = 2*numpy.pi*numpy.random.default_rng(42).random(self.N) # random conditions of phases between 0 and 2pi
+            self.initialvalues = 2*numpy.pi*self.reproducible_rng.random(self.N) # random conditions of phases between 0 and 2pi
         
         elif clustered == True:
-            self.init_values_N1 = numpy.random.default_rng(421).normal(loc=2*numpy.pi*numpy.random.default_rng(421).random(), scale=.5, size=self.N1)
-            self.init_values_N2 = numpy.random.default_rng(422).normal(loc=2*numpy.pi*numpy.random.default_rng(422).random(), scale=.5, size=self.N2)
-            self.init_values_N3 = numpy.random.default_rng(425).normal(loc=2*numpy.pi*numpy.random.default_rng(425).random(), scale=.5, size=self.N3)
+            self.init_values_N1 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N1)
+            self.init_values_N2 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N2)
+            self.init_values_N3 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N3)
 
             self.initialvalues = numpy.hstack((numpy.hstack((self.init_values_N1, self.init_values_N2)), self.init_values_N3))
 
         return self.initialvalues
 
-    def setmodelconstants(self):
-        print("Please, choose the intra-subpopulations' coupling constants:")
-        self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
-        self.k22 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 2 interaction: '))
-        self.k33 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 3 interaction: '))
+    def setmodelconstants(self, random):
+        if random == False:
+            print("Please, choose the intra-subpopulations' coupling constants:")
+            self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
+            self.k22 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 2 interaction: '))
+            self.k33 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 3 interaction: '))
 
-        print("\nNow, choose the inter-subpopulations' coupling constants:")
-        self.k12 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 2 interaction: '))
-        self.k13 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 3 interaction: '))
-        self.k21 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 1 interaction: '))
-        self.k23 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 3 interaction: '))
-        self.k31 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 1 interaction: '))
-        self.k32 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 2 interaction: '))
+            print("\nNow, choose the inter-subpopulations' coupling constants:")
+            self.k12 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 2 interaction: '))
+            self.k13 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 3 interaction: '))
+            self.k21 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 1 interaction: '))
+            self.k23 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 3 interaction: '))
+            self.k31 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 1 interaction: '))
+            self.k32 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 2 interaction: '))
+
+            print("\nThen, choose the intra-subpopulations' phase delay alpha:")
+            self.alpha11 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 1 interaction: '))
+            self.alpha22 = float(input('Choose alpha for subpopulation 2 <--> subpopulation 2 interaction: '))
+            self.alpha33 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 3 interaction: '))
+
+            print("\nFinally, choose the inter-subpopulations' phase delay alpha:")
+            self.alpha12 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 2 interaction: '))
+            self.alpha13 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 3 interaction: '))
+            self.alpha21 = float(input('Choose alpha for subpopulation 2 <--> subpopulation 1 interaction: '))
+            self.alpha23 = float(input('Choose alpha for subpopulation 2 <--> subpopulation 3 interaction: '))
+            self.alpha31 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 1 interaction: '))
+            self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
+
+        if random == True:
+            self.k11 = self.notreproducible_rng.random()*50.
+            self.k22 = self.notreproducible_rng.random()*50.
+            self.k33 = self.notreproducible_rng.random()*50.
+            
+            self.k12 = self.notreproducible_rng.random()*50.
+            self.k13 = self.notreproducible_rng.random()*50.
+            self.k21 = self.notreproducible_rng.random()*50.
+            self.k23 = self.notreproducible_rng.random()*50.
+            self.k31 = self.notreproducible_rng.random()*50.
+            self.k32 = self.notreproducible_rng.random()*50.
+
+            self.alpha11 = self.notreproducible_rng.random()
+            self.alpha22 = self.notreproducible_rng.random()
+            self.alpha33 = self.notreproducible_rng.random()
+
+            self.alpha12 = self.notreproducible_rng.random()
+            self.alpha13 = self.notreproducible_rng.random()
+            self.alpha21 = self.notreproducible_rng.random()
+            self.alpha23 = self.notreproducible_rng.random()
+            self.alpha31 = self.notreproducible_rng.random()
+            self.alpha32 = self.notreproducible_rng.random()
 
         self.kmatrix = numpy.array([
             [self.k11, self.k12, self.k13],
             [self.k21, self.k22, self.k23],
             [self.k31, self.k32, self.k33]
+        ])
+
+        self.alphamatrix = numpy.array([
+            [self.alpha11, self.alpha12, self.alpha13],
+            [self.alpha21, self.alpha22, self.alpha23],
+            [self.alpha31, self.alpha32, self.alpha33]
         ])
 
         self.omega1 = cauchy.rvs(loc=143., scale=2., size=self.N1)
@@ -51,25 +96,6 @@ class kurasaka_oscillators:
 
         self.omegamatrix = numpy.hstack((numpy.hstack((self.omega1, self.omega2)), self.omega3))
 
-        print("\nThen, choose the intra-subpopulations' phase delay alpha:")
-        self.alpha11 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 1 interaction: '))
-        self.alpha22 = float(input('Choose alpha for subpopulation 2 <--> subpopulation 2 interaction: '))
-        self.alpha33 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 3 interaction: '))
-
-        print("\nFinally, choose the inter-subpopulations' phase delay alpha:")
-        self.alpha12 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 2 interaction: '))
-        self.alpha13 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 3 interaction: '))
-        self.alpha21 = float(input('Choose alpha for subpopulation 2 <--> subpopulation 1 interaction: '))
-        self.alpha23 = float(input('Choose alpha for subpopulation 2 <--> subpopulation 3 interaction: '))
-        self.alpha31 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 1 interaction: '))
-        self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
-
-        self.alphamatrix = numpy.array([
-            [self.alpha11, self.alpha12, self.alpha13],
-            [self.alpha21, self.alpha22, self.alpha23],
-            [self.alpha31, self.alpha32, self.alpha33]
-        ])
-        
         return self.kmatrix, self.omegamatrix, self.alphamatrix
 
     def kurasaka_function(self, x, t):
@@ -176,29 +202,29 @@ class kurasaka_oscillators:
         return self.syncs, self.orderparameters # returns |Z| and Z, both can be useful
 
     def ordparam_phase(self):
-        self.cos_phase_subpop1 = []
-        self.cos_phase_subpop2 = []
-        self.cos_phase_subpop3 = []
+        self.real_ordparam_subpop1 = []
+        self.real_ordparam_subpop2 = []
+        self.real_ordparam_subpop3 = []
 
         for i in range(len(self.times)):
-            self.cos_phase_subpop1.append(
-                self.orderparameter_subpop1[i].real/self.sync_subpop1[i]
+            self.real_ordparam_subpop1.append(
+                self.orderparameter_subpop1[i].real
             )
-            self.cos_phase_subpop2.append(
-                self.orderparameter_subpop2[i].real/self.sync_subpop2[i]
+            self.real_ordparam_subpop2.append(
+                self.orderparameter_subpop2[i].real
             )
-            self.cos_phase_subpop3.append(
-                self.orderparameter_subpop2[i].real/self.sync_subpop3[i]
+            self.real_ordparam_subpop3.append(
+                self.orderparameter_subpop3[i].real
             )
 
-        return self.cos_phase_subpop1, self.cos_phase_subpop2, self.cos_phase_subpop3
+        return self.real_ordparam_subpop1, self.real_ordparam_subpop2, self.real_ordparam_subpop3
 
     def findperiod(self):
-        self.peaks_phase_subpop1,_ = find_peaks(self.cos_phase_subpop1)
+        self.peaks_phase_subpop1,_ = find_peaks(self.real_ordparam_subpop1)
         self.peaks_phase_subpop1 = self.peaks_phase_subpop1*self.time_end/self.time_points
-        self.peaks_phase_subpop2,_ = find_peaks(self.cos_phase_subpop2)
+        self.peaks_phase_subpop2,_ = find_peaks(self.real_ordparam_subpop2)
         self.peaks_phase_subpop2 = self.peaks_phase_subpop2*self.time_end/self.time_points
-        self.peaks_phase_subpop3,_ = find_peaks(self.cos_phase_subpop3)
+        self.peaks_phase_subpop3,_ = find_peaks(self.real_ordparam_subpop3)
         self.peaks_phase_subpop3 = self.peaks_phase_subpop3*self.time_end/self.time_points
 
         self.periods_subpop1 = []
@@ -227,9 +253,9 @@ class kurasaka_oscillators:
         
         return self.mean_frequencies
 
-    def printsyncparam(self):
-        plt.figure(f'{self.N} Oscillators Sync')
-        plt.title(f'Synchronization Parameters')
+    def printsyncparam(self, num_trial, save):
+        plt.figure(f'{self.N} Oscillators Sync; Trial {num_trial}', figsize=(13,6))
+        plt.title(f'{self.N} Oscillators Sync; Trial {num_trial}')
         plt.plot(self.times, self.sync_subpop1, label='SubPop 1')
         plt.plot(self.times, self.sync_subpop2, label='SubPop 2')
         plt.plot(self.times, self.sync_subpop3, label='SubPop 3')
@@ -238,14 +264,23 @@ class kurasaka_oscillators:
         plt.ylim([0.,1.])
         plt.yticks(numpy.arange(0, 1.1, step=0.1))
         plt.legend()
+        if save == True:
+            plt.savefig(f'/home/f_mastellone/Images/SyncTrial{num_trial}.png')
+        elif save == False:
+            pass
 
-    def printcosineordparam(self):
-        plt.figure()
-        plt.title("Subpops' Phase Evolution")
-        plt.plot(self.times, self.cos_phase_subpop1, label='SubPop 1')
-        plt.plot(self.times, self.cos_phase_subpop2, label='SubPop 2')
-        plt.plot(self.times, self.cos_phase_subpop3, label='SubPop 3')
+    def printcosineordparam(self, num_trial, save):
+        plt.figure(f"Subpops' Phase Evolution; Trial {num_trial}", figsize=(13,6))
+        plt.title(f"Subpops' Phase Evolution; Trial {num_trial}")
+        plt.plot(self.times, self.real_ordparam_subpop1, label='SubPop 1')
+        plt.plot(self.times, self.real_ordparam_subpop2, label='SubPop 2')
+        plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
+        plt.xlabel('Time Steps')
         plt.legend()
+        if save == True:
+            plt.savefig(f'/home/f_mastellone/Images/CosOrdParTrial{num_trial}.png')
+        elif save == False:
+            pass
 
     def animate_function(self, i): 
         self.phases = self.kurasaka_evo[i:i+1]
@@ -327,7 +362,6 @@ class kurasaka_oscillators:
 import numpy
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import random
 import argparse
 
 from scipy.integrate import odeint
@@ -341,33 +375,29 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    random.seed(42)
-
     num_subpop1 = 20
     num_subpop2 = 40
-    num_subpop3 = 25
+    num_subpop3 = 30
 
-    kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-    coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants()
+    for i in range(30):
+        kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
+        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True)
 
-    init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
+        print(f'This is trial number {i}')
+        print(f'Coupling constants are:\n{coupconsts}\n')
+        print(f'Coupling constants are:\n{alphas}\n')
 
-    times = kuramotosakaguchi.settimes(0., 10., 1000)
+        init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
+        times = kuramotosakaguchi.settimes(0., 10., 1000)
 
-    equations = kuramotosakaguchi.kurasaka_function
-    phasesevolution = kuramotosakaguchi.evolve(equations)
-    syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
-    kuramotosakaguchi.ordparam_phase()
-    
-    kuramotosakaguchi.printcosineordparam()
-    kuramotosakaguchi.printsyncparam()
+        equations = kuramotosakaguchi.kurasaka_function
+        phasesevolution = kuramotosakaguchi.evolve(equations)
+        syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
+        kuramotosakaguchi.ordparam_phase()
+        
+        kuramotosakaguchi.printsyncparam(i, save=True)
 
-    frequencies = kuramotosakaguchi.findperiod()
-    print(f'\nSubPop 1 frequency: {frequencies[0]}')
-    print(f'\nSubPop 2 frequency: {frequencies[1]}')
-    print(f'\nSubPop 3 frequency: {frequencies[2]}')
-
-    kuramotosakaguchi.showplots()
-
-    # animazione = kuramotosakaguchi.animateoscillators()
-    # kuramotosakaguchi.saveanimation(animazione, save_path)
+        frequencies = kuramotosakaguchi.findperiod()
+        print(f'\nSubPop 1 frequency: {frequencies[0]}')
+        print(f'SubPop 2 frequency: {frequencies[1]}')
+        print(f'SubPop 3 frequency: {frequencies[2]}')
