@@ -379,7 +379,7 @@ if __name__ == "__main__":
     num_subpop2 = 40
     num_subpop3 = 30
 
-    for i in range(30):
+    for i in range(60):
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True)
 
@@ -393,6 +393,9 @@ if __name__ == "__main__":
         equations = kuramotosakaguchi.kurasaka_function
         phasesevolution = kuramotosakaguchi.evolve(equations)
         syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
+
+        print(len(syncs[100:]))
+
         kuramotosakaguchi.ordparam_phase()
         
         kuramotosakaguchi.printsyncparam(i, save=True)
