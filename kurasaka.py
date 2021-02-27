@@ -394,9 +394,9 @@ if __name__ == "__main__":
         phasesevolution = kuramotosakaguchi.evolve(equations)
         syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
 
-        print(len(syncs[0][100:]))
-        print(len(syncs[1][100:]))
-        print(len(syncs[2][100:]))
+        print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}\n')
+        print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}\n')
+        print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
 
         kuramotosakaguchi.ordparam_phase()
         
