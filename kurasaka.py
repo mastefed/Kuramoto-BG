@@ -56,16 +56,16 @@ class kurasaka_oscillators:
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
         if random == True:
-            self.k11 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
-            self.k22 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
-            self.k33 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
+            self.k11 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k22 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k33 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
             
-            self.k12 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
-            self.k13 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
-            self.k21 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
-            self.k23 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
-            self.k31 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
-            self.k32 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
+            self.k12 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k13 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k21 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k23 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k31 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k32 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
 
             self.alpha11 = 0. # self.notreproducible_rng.random()
             self.alpha22 = 0. # self.notreproducible_rng.random()
