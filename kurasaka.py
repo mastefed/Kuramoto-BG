@@ -58,16 +58,16 @@ class kurasaka_oscillators:
         if random == True:
             mean_coupconst = self.notreproducible_rng.random()*50.
 
-            self.k11 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
-            self.k22 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
-            self.k33 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k11 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k22 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k33 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
             
-            self.k12 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
-            self.k13 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
-            self.k21 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
-            self.k23 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
-            self.k31 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
-            self.k32 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k12 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k13 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k21 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k23 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k31 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k32 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
 
             self.alpha11 = self.notreproducible_rng.random()
             self.alpha22 = self.notreproducible_rng.random()
@@ -387,7 +387,7 @@ if __name__ == "__main__":
 
         print(f'This is trial number {i}\n')
         print(f'Coupling constants are:\n{coupconsts}\n')
-        print(f'Coupling constants are:\n{alphas}\n')
+        print(f'Phase delay constants are:\n{alphas}\n')
 
         init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
         times = kuramotosakaguchi.settimes(0., 10., 1000)
