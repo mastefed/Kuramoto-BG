@@ -58,16 +58,16 @@ class kurasaka_oscillators:
         if random == True:
             mean_coupconst = self.notreproducible_rng.random()*50.
 
-            self.k11 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
-            self.k22 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
-            self.k33 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k11 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
+            self.k22 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
+            self.k33 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
             
-            self.k12 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
-            self.k13 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
-            self.k21 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
-            self.k23 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
-            self.k31 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
-            self.k32 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=0)
+            self.k12 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
+            self.k13 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
+            self.k21 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
+            self.k23 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
+            self.k31 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
+            self.k32 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.)
 
             self.alpha11 = self.notreproducible_rng.random()
             self.alpha22 = self.notreproducible_rng.random()
