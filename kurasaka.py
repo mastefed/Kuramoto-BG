@@ -56,16 +56,18 @@ class kurasaka_oscillators:
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
         if random == True:
-            self.k11 = self.notreproducible_rng.random()*50.
-            self.k22 = self.notreproducible_rng.random()*50.
-            self.k33 = self.notreproducible_rng.random()*50.
+            mean_coupconst = self.notreproducible_rng.random()*50.
+
+            self.k11 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k22 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k33 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
             
-            self.k12 = self.notreproducible_rng.random()*50.
-            self.k13 = self.notreproducible_rng.random()*50.
-            self.k21 = self.notreproducible_rng.random()*50.
-            self.k23 = self.notreproducible_rng.random()*50.
-            self.k31 = self.notreproducible_rng.random()*50.
-            self.k32 = self.notreproducible_rng.random()*50.
+            self.k12 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k13 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k21 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k23 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k31 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
+            self.k32 = self.notreproducible_rng.normal(loc=mean_coupconst, scale=2., size=1)
 
             self.alpha11 = self.notreproducible_rng.random()
             self.alpha22 = self.notreproducible_rng.random()
