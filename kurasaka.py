@@ -383,7 +383,7 @@ if __name__ == "__main__":
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True)
 
-        print(f'This is trial number {i}')
+        print(f'This is trial number {i}\n')
         print(f'Coupling constants are:\n{coupconsts}\n')
         print(f'Coupling constants are:\n{alphas}\n')
 
@@ -398,6 +398,6 @@ if __name__ == "__main__":
         kuramotosakaguchi.printsyncparam(i, save=True)
 
         frequencies = kuramotosakaguchi.findperiod()
-        print(f'\nSubPop 1 frequency: {frequencies[0]}')
+        print(f'SubPop 1 frequency: {frequencies[0]}')
         print(f'SubPop 2 frequency: {frequencies[1]}')
-        print(f'SubPop 3 frequency: {frequencies[2]}')
+        print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
