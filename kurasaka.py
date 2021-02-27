@@ -27,7 +27,7 @@ class kurasaka_oscillators:
 
         return self.initialvalues
 
-    def setmodelconstants(self, random):
+    def setmodelconstants(self, random, mean_coupconst):
         if random == False:
             print("Please, choose the intra-subpopulations' coupling constants:")
             self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
@@ -56,8 +56,6 @@ class kurasaka_oscillators:
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
         if random == True:
-            mean_coupconst = self.notreproducible_rng.random()*50.
-
             self.k11 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
             self.k22 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
             self.k33 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
@@ -69,16 +67,16 @@ class kurasaka_oscillators:
             self.k31 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
             self.k32 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=2.5))
 
-            self.alpha11 = self.notreproducible_rng.random()
-            self.alpha22 = self.notreproducible_rng.random()
-            self.alpha33 = self.notreproducible_rng.random()
+            self.alpha11 = 0. # self.notreproducible_rng.random()
+            self.alpha22 = 0. # self.notreproducible_rng.random()
+            self.alpha33 = 0. # self.notreproducible_rng.random()
 
-            self.alpha12 = self.notreproducible_rng.random()
-            self.alpha13 = self.notreproducible_rng.random()
-            self.alpha21 = self.notreproducible_rng.random()
-            self.alpha23 = self.notreproducible_rng.random()
-            self.alpha31 = self.notreproducible_rng.random()
-            self.alpha32 = self.notreproducible_rng.random()
+            self.alpha12 = 0. # self.notreproducible_rng.random()
+            self.alpha13 = 0. # self.notreproducible_rng.random()
+            self.alpha21 = 0. # self.notreproducible_rng.random()
+            self.alpha23 = 0. # self.notreproducible_rng.random()
+            self.alpha31 = 0. # self.notreproducible_rng.random()
+            self.alpha32 = 0. # self.notreproducible_rng.random()
 
         self.kmatrix = numpy.array([
             [self.k11, self.k12, self.k13],
@@ -381,9 +379,12 @@ if __name__ == "__main__":
     num_subpop2 = 40
     num_subpop3 = 30
 
-    for i in range(60):
+    list_of_coupconsts = [5., 10., 15., 20., 25., 30., 35., 40.]
+    list_of_alphas = [.2, .4, .6, .8, 1.]
+
+    for i, coupconstant in enumerate(list_of_coupconsts):
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True)
+        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True, mean_coupconst = coupconstant)
 
         print(f'This is trial number {i}\n')
         print(f'Coupling constants are:\n{coupconsts}\n')
