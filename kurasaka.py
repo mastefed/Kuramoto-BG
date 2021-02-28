@@ -384,7 +384,7 @@ if __name__ == "__main__":
 
     for i, alphaconstant in enumerate(list_of_alphas):
 
-        coupconstant = 20.
+        coupconstant = 25.
 
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True, mean_coupconst = coupconstant, mean_alpha=alphaconstant)
