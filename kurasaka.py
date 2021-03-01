@@ -27,7 +27,7 @@ class kurasaka_oscillators:
 
         return self.initialvalues
 
-    def setmodelconstants(self, random, mean_coupconst, mean_alpha):
+    def setmodelconstants(self, random):
         if random == False:
             print("Please, choose the intra-subpopulations' coupling constants:")
             self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
@@ -56,27 +56,28 @@ class kurasaka_oscillators:
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
         if random == True:
-            self.k11 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
-            self.k22 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
-            self.k33 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            mean_coupconst = float(input('Choose the mean K: '))
+            self.k11 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k22 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k33 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
             
-            self.k12 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
-            self.k13 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
-            self.k21 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
-            self.k23 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
-            self.k31 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
-            self.k32 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
+            self.k12 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k13 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k21 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k23 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k31 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k32 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
 
-            self.alpha11 = mean_alpha # self.notreproducible_rng.random()
-            self.alpha22 = mean_alpha # self.notreproducible_rng.random()
-            self.alpha33 = mean_alpha # self.notreproducible_rng.random()
+            self.alpha11 = self.notreproducible_rng.random()
+            self.alpha22 = self.notreproducible_rng.random()
+            self.alpha33 = self.notreproducible_rng.random()
 
-            self.alpha12 = mean_alpha # self.notreproducible_rng.random()
-            self.alpha13 = mean_alpha # self.notreproducible_rng.random()
-            self.alpha21 = mean_alpha # self.notreproducible_rng.random()
-            self.alpha23 = mean_alpha # self.notreproducible_rng.random()
-            self.alpha31 = mean_alpha # self.notreproducible_rng.random()
-            self.alpha32 = mean_alpha # self.notreproducible_rng.random()
+            self.alpha12 = self.notreproducible_rng.random()
+            self.alpha13 = self.notreproducible_rng.random()
+            self.alpha21 = self.notreproducible_rng.random()
+            self.alpha23 = self.notreproducible_rng.random()
+            self.alpha31 = self.notreproducible_rng.random()
+            self.alpha32 = self.notreproducible_rng.random()
 
         self.kmatrix = numpy.array([
             [self.k11, self.k12, self.k13],
@@ -379,35 +380,28 @@ if __name__ == "__main__":
     num_subpop2 = 40
     num_subpop3 = 30
 
-    list_of_coupconsts = [7., 12., 17., 22., 27., 32., 37., 45., 50., 60., 70.]
+    kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
+    coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=False)
 
-    for i, coupconstant in enumerate(list_of_coupconsts):
+    print(f'\nCoupling constants are:\n{coupconsts}\n')
+    print(f'Phase delay constants are:\n{alphas}\n')
 
-        alphaconstant = 0.
+    init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
+    times = kuramotosakaguchi.settimes(0., 10., 1000)
 
-        kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True, mean_coupconst = coupconstant, mean_alpha=alphaconstant)
+    equations = kuramotosakaguchi.kurasaka_function
+    phasesevolution = kuramotosakaguchi.evolve(equations)
+    syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
 
-        print(f'This is trial number {i}\n')
-        print(f'Coupling constants are:\n{coupconsts}\n')
-        print(f'Phase delay constants are:\n{alphas}\n')
+    print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}\n')
+    print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}\n')
+    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
 
-        init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
-        times = kuramotosakaguchi.settimes(0., 10., 1000)
+    kuramotosakaguchi.ordparam_phase()
 
-        equations = kuramotosakaguchi.kurasaka_function
-        phasesevolution = kuramotosakaguchi.evolve(equations)
-        syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
+    kuramotosakaguchi.printcosineordparam(1, save=True)
 
-        print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}\n')
-        print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}\n')
-        print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
-
-        kuramotosakaguchi.ordparam_phase()
-        
-        kuramotosakaguchi.printsyncparam(i, save=True)
-
-        frequencies = kuramotosakaguchi.findperiod()
-        print(f'SubPop 1 frequency: {frequencies[0]}')
-        print(f'SubPop 2 frequency: {frequencies[1]}')
-        print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
+    frequencies = kuramotosakaguchi.findperiod()
+    print(f'SubPop 1 frequency: {frequencies[0]}')
+    print(f'SubPop 2 frequency: {frequencies[1]}')
+    print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
