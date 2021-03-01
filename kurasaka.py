@@ -379,12 +379,11 @@ if __name__ == "__main__":
     num_subpop2 = 40
     num_subpop3 = 30
 
-    list_of_coupconsts = [5., 10., 15., 20., 25., 30., 35., 40.]
-    list_of_alphas = [.2, .4, .6, .8, 1.]
+    list_of_coupconsts = [7., 12., 17., 22., 27., 32., 37., 45., 50., 60., 70.]
 
-    for i, alphaconstant in enumerate(list_of_alphas):
+    for i, coupconstant in enumerate(list_of_coupconsts):
 
-        coupconstant = 25.
+        alphaconstant = 0.5
 
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True, mean_coupconst = coupconstant, mean_alpha=alphaconstant)
