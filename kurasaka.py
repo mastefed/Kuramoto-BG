@@ -67,9 +67,9 @@ class kurasaka_oscillators:
             self.k31 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
             self.k32 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=1.))
 
-            self.alpha11 = .05 # self.notreproducible_rng.random()
-            self.alpha22 = .05 # self.notreproducible_rng.random()
-            self.alpha33 = .05 # self.notreproducible_rng.random()
+            self.alpha11 = mean_alpha # self.notreproducible_rng.random()
+            self.alpha22 = mean_alpha # self.notreproducible_rng.random()
+            self.alpha33 = mean_alpha # self.notreproducible_rng.random()
 
             self.alpha12 = mean_alpha # self.notreproducible_rng.random()
             self.alpha13 = mean_alpha # self.notreproducible_rng.random()
@@ -383,7 +383,7 @@ if __name__ == "__main__":
 
     for i, coupconstant in enumerate(list_of_coupconsts):
 
-        alphaconstant = 0.5
+        alphaconstant = 0.
 
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=True, mean_coupconst = coupconstant, mean_alpha=alphaconstant)
