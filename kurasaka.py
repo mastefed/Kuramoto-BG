@@ -277,6 +277,7 @@ class kurasaka_oscillators:
         plt.plot(self.times, self.real_ordparam_subpop2, label='SubPop 2')
         plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
         plt.xlabel('Time Steps')
+        plt.xlim([0.,2.3])
         plt.legend()
         if save == True:
             plt.savefig(f'/home/f_mastellone/Images/CosOrdParTrial{num_trial}.png')
