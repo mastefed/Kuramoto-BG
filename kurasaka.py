@@ -384,9 +384,9 @@ if __name__ == "__main__":
     output_simulation_sub2_freq = []
     output_simulation_sub3_freq = []
 
-    xaxis = numpy.linspace(1,3,3)
+    xaxis = numpy.linspace(1,30,30)
 
-    for i in range(1, 4):
+    for i in range(1, 31):
         num_subpop1 = i*2
         num_subpop2 = i*4
         num_subpop3 = i*3
