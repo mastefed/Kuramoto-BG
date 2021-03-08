@@ -384,17 +384,21 @@ if __name__ == "__main__":
     output_simulation_sub2_freq = []
     output_simulation_sub3_freq = []
 
-    xaxis = numpy.linspace(1,30,30)
+    xaxis = numpy.linspace(1,3,3)
 
     for i in range(1, 3):
         num_subpop1 = i*2
         num_subpop2 = i*4
         num_subpop3 = i*3
 
+        print(f'\nPop. 1 number of phase oscillators: {num_subpop1}\n')
+        print(f'\nPop. 2 number of phase oscillators: {num_subpop2}\n')
+        print(f'\nPop. 3 number of phase oscillators: {num_subpop3}\n')
+
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(choose=True)
 
-        print(f'\nCoupling constants are:\n{coupconsts}\n')
+        print(f'Coupling constants are:\n{coupconsts}\n')
         print(f'Phase delay constants are:\n{alphas}\n')
 
         init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
