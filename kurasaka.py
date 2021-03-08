@@ -27,8 +27,8 @@ class kurasaka_oscillators:
 
         return self.initialvalues
 
-    def setmodelconstants(self, random):
-        if random == False:
+    def setmodelconstants(self, choose):
+        if choose == False:
             print("Please, choose the intra-subpopulations' coupling constants:")
             self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
             self.k22 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 2 interaction: '))
@@ -55,29 +55,28 @@ class kurasaka_oscillators:
             self.alpha31 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 1 interaction: '))
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
-        if random == True:
-            mean_coupconst = float(input('Choose the mean K: '))
-            self.k11 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k22 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k33 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+        if choose == True:
+            self.k11 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k22 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k33 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
             
-            self.k12 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k13 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k21 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k23 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k31 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k32 = numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k12 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k13 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k21 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k23 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k31 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k32 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
 
-            self.alpha11 = self.notreproducible_rng.random()
-            self.alpha22 = self.notreproducible_rng.random()
-            self.alpha33 = self.notreproducible_rng.random()
+            self.alpha11 = 0. #self.notreproducible_rng.random()
+            self.alpha22 = 0. #self.notreproducible_rng.random()
+            self.alpha33 = 0. #self.notreproducible_rng.random()
 
-            self.alpha12 = self.notreproducible_rng.random()
-            self.alpha13 = self.notreproducible_rng.random()
-            self.alpha21 = self.notreproducible_rng.random()
-            self.alpha23 = self.notreproducible_rng.random()
-            self.alpha31 = self.notreproducible_rng.random()
-            self.alpha32 = self.notreproducible_rng.random()
+            self.alpha12 = 0. #self.notreproducible_rng.random()
+            self.alpha13 = 0. #self.notreproducible_rng.random()
+            self.alpha21 = 0. #self.notreproducible_rng.random()
+            self.alpha23 = 0. #self.notreproducible_rng.random()
+            self.alpha31 = 0. #self.notreproducible_rng.random()
+            self.alpha32 = 0. #self.notreproducible_rng.random()
 
         self.kmatrix = numpy.array([
             [self.k11, self.k12, self.k13],
@@ -377,32 +376,74 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    num_subpop1 = 20
-    num_subpop2 = 40
-    num_subpop3 = 30
+    output_simulation_sub1_sync = []
+    output_simulation_sub2_sync = []
+    output_simulation_sub3_sync = []
 
-    kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-    coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(random=False)
+    output_simulation_sub1_freq = []
+    output_simulation_sub2_freq = []
+    output_simulation_sub3_freq = []
 
-    print(f'\nCoupling constants are:\n{coupconsts}\n')
-    print(f'Phase delay constants are:\n{alphas}\n')
+    xaxis = numpy.linspace(1,30,30)
 
-    init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
-    times = kuramotosakaguchi.settimes(0., 10., 1000)
+    for i in range(1, 3):
+        num_subpop1 = i*2
+        num_subpop2 = i*4
+        num_subpop3 = i*3
 
-    equations = kuramotosakaguchi.kurasaka_function
-    phasesevolution = kuramotosakaguchi.evolve(equations)
-    syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
+        kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
+        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(choose=True)
 
-    print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}\n')
-    print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}\n')
-    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
+        print(f'\nCoupling constants are:\n{coupconsts}\n')
+        print(f'Phase delay constants are:\n{alphas}\n')
 
-    kuramotosakaguchi.ordparam_phase()
+        init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
+        times = kuramotosakaguchi.settimes(0., 10., 1000)
 
-    kuramotosakaguchi.printcosineordparam(1, save=True)
+        equations = kuramotosakaguchi.kurasaka_function
+        phasesevolution = kuramotosakaguchi.evolve(equations)
+        syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
 
-    frequencies = kuramotosakaguchi.findperiod()
-    print(f'SubPop 1 frequency: {frequencies[0]}')
-    print(f'SubPop 2 frequency: {frequencies[1]}')
-    print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
+        print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}\n')
+        print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}\n')
+        print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
+
+        kuramotosakaguchi.ordparam_phase()
+
+        # kuramotosakaguchi.printcosineordparam(1, save=True)
+
+        frequencies = kuramotosakaguchi.findperiod()
+        print(f'SubPop 1 frequency: {frequencies[0]}')
+        print(f'SubPop 2 frequency: {frequencies[1]}')
+        print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
+        
+        output_simulation_sub1_sync.append(numpy.mean(syncs[0][300:]))
+        output_simulation_sub2_sync.append(numpy.mean(syncs[1][300:]))
+        output_simulation_sub3_sync.append(numpy.mean(syncs[2][300:]))
+
+        output_simulation_sub1_freq.append(frequencies[0])
+        output_simulation_sub2_freq.append(frequencies[0])
+        output_simulation_sub3_freq.append(frequencies[0])
+
+    plt.figure(1, figsize=(13,6))
+    plt.title('Sync. Param vs i')
+    plt.plot(xaxis, output_simulation_sub1_sync, label='Pop. 1')
+    plt.plot(xaxis, output_simulation_sub2_sync, label='Pop. 2')
+    plt.plot(xaxis, output_simulation_sub3_sync, label='Pop. 3')
+    plt.xlabel('Index i')
+    plt.ylabel('Sync.')
+    plt.legend()
+    plt.grid()
+    plt.savefig(f'/home/f_mastellone/Images/syncvsi.png')
+
+
+    plt.figure(2, figsize=(13,6))
+    plt.title('Sync. Frequencies vs i')
+    plt.plot(xaxis, output_simulation_sub1_freq, label='Pop. 1')
+    plt.plot(xaxis, output_simulation_sub2_freq, label='Pop. 2')
+    plt.plot(xaxis, output_simulation_sub3_freq, label='Pop. 3')
+    plt.xlabel('Index i')
+    plt.ylabel('Sync. Frequencies')
+    plt.legend()
+    plt.grid()
+    plt.savefig(f'/home/f_mastellone/Images/freqvsi.png')
