@@ -391,7 +391,9 @@ if __name__ == "__main__":
         num_subpop2 = i*4
         num_subpop3 = i*3
 
-        print(f'\nPop. 1 number of phase oscillators: {num_subpop1}')
+        print(f'\nTrial Number {i}\n')
+
+        print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
         print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
         print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
 
