@@ -386,14 +386,14 @@ if __name__ == "__main__":
 
     xaxis = numpy.linspace(1,3,3)
 
-    for i in range(1, 3):
+    for i in range(1, 4):
         num_subpop1 = i*2
         num_subpop2 = i*4
         num_subpop3 = i*3
 
-        print(f'\nPop. 1 number of phase oscillators: {num_subpop1}\n')
-        print(f'\nPop. 2 number of phase oscillators: {num_subpop2}\n')
-        print(f'\nPop. 3 number of phase oscillators: {num_subpop3}\n')
+        print(f'\nPop. 1 number of phase oscillators: {num_subpop1}')
+        print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
+        print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
 
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(choose=True)
@@ -408,8 +408,8 @@ if __name__ == "__main__":
         phasesevolution = kuramotosakaguchi.evolve(equations)
         syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
 
-        print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}\n')
-        print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}\n')
+        print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
+        print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
         print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
 
         kuramotosakaguchi.ordparam_phase()
