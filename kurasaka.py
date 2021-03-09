@@ -384,9 +384,7 @@ if __name__ == "__main__":
     output_simulation_sub2_freq = []
     output_simulation_sub3_freq = []
 
-    xaxis = numpy.linspace(1,30,30)
-
-    listalistosa = [1, 2, 4, 6]
+    listalistosa = [.5, 1, 2, 2.5, 3, 4]
 
     for i in listalistosa:
         num_subpop1 = i*10
@@ -435,9 +433,9 @@ if __name__ == "__main__":
 
     plt.figure(1, figsize=(13,6))
     plt.title('Sync. Param vs i')
-    plt.plot(xaxis, output_simulation_sub1_sync, label='Pop. 1')
-    plt.plot(xaxis, output_simulation_sub2_sync, label='Pop. 2')
-    plt.plot(xaxis, output_simulation_sub3_sync, label='Pop. 3')
+    plt.plot(listalistosa, output_simulation_sub1_sync, label='Pop. 1')
+    plt.plot(listalistosa, output_simulation_sub2_sync, label='Pop. 2')
+    plt.plot(listalistosa, output_simulation_sub3_sync, label='Pop. 3')
     plt.xlabel('Index i')
     plt.ylabel('Sync.')
     plt.legend()
@@ -447,9 +445,9 @@ if __name__ == "__main__":
 
     plt.figure(2, figsize=(13,6))
     plt.title('Sync. Frequencies vs i')
-    plt.plot(xaxis, output_simulation_sub1_freq, label='Pop. 1')
-    plt.plot(xaxis, output_simulation_sub2_freq, label='Pop. 2')
-    plt.plot(xaxis, output_simulation_sub3_freq, label='Pop. 3')
+    plt.plot(listalistosa, output_simulation_sub1_freq, label='Pop. 1')
+    plt.plot(listalistosa, output_simulation_sub2_freq, label='Pop. 2')
+    plt.plot(listalistosa, output_simulation_sub3_freq, label='Pop. 3')
     plt.xlabel('Index i')
     plt.ylabel('Sync. Frequencies')
     plt.legend()
