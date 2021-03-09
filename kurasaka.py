@@ -386,10 +386,12 @@ if __name__ == "__main__":
 
     xaxis = numpy.linspace(1,30,30)
 
-    for i in range(1, 31):
-        num_subpop1 = i*2
-        num_subpop2 = i*4
-        num_subpop3 = i*3
+    listalistosa = [1, 2, 4, 6]
+
+    for i in listalistosa:
+        num_subpop1 = i*10
+        num_subpop2 = i*30
+        num_subpop3 = i*20
 
         print(f'\nTrial Number {i}\n')
 
