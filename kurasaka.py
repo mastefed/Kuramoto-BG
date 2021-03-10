@@ -27,7 +27,7 @@ class kurasaka_oscillators:
 
         return self.initialvalues
 
-    def setmodelconstants(self, fixed):
+    def setmodelconstants(self, fixed, omegaconst):
         if fixed == False:
             print("Please, choose the intra-subpopulations' coupling constants:")
             self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
@@ -90,9 +90,9 @@ class kurasaka_oscillators:
             [self.alpha31, self.alpha32, self.alpha33]
         ])
 
-        self.omega1 = cauchy.rvs(loc=143., scale=2., size=self.N1)
-        self.omega2 = cauchy.rvs(loc=71., scale=2., size=self.N2)
-        self.omega3 = cauchy.rvs(loc=100., scale=2., size=self.N3)
+        self.omega1 = cauchy.rvs(loc=omegaconst*2., scale=2., size=self.N1) # 143.
+        self.omega2 = cauchy.rvs(loc=omegaconst, scale=2., size=self.N2) # 71.
+        self.omega3 = cauchy.rvs(loc=omegaconst*1.35, scale=2., size=self.N3) # 95.
 
         self.omegamatrix = numpy.hstack((numpy.hstack((self.omega1, self.omega2)), self.omega3))
 
@@ -219,7 +219,7 @@ class kurasaka_oscillators:
 
         return self.real_ordparam_subpop1, self.real_ordparam_subpop2, self.real_ordparam_subpop3
 
-    def psdofordparam(self):
+    def psdofordparam(self, save, num_trial):
         self.freq1, self.psd1 = welch(self.real_ordparam_subpop1, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq2, self.psd2 = welch(self.real_ordparam_subpop2, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq3, self.psd3 = welch(self.real_ordparam_subpop3, fs=1/((self.time_end - self.time_start)/self.time_points))
@@ -233,6 +233,11 @@ class kurasaka_oscillators:
         plt.plot(self.freq2, self.psd2, label='Pop. 2')
         plt.plot(self.freq3, self.psd3, label='Pop. 3')
         plt.legend()
+
+        if save == True:
+            plt.savefig(f'/home/f_mastellone/Images/PSD{num_trial}.png')
+        elif save == False:
+            pass
 
     def findperiod(self):
         self.peaks_phase_subpop1,_ = find_peaks(self.real_ordparam_subpop1)
@@ -399,12 +404,12 @@ if __name__ == "__main__":
     output_simulation_sub2_freq = []
     output_simulation_sub3_freq = []
 
-    listalistosa = [1, 2, 3, 4, 5, 6, 7]
+    listalistosa = [20., 40., 70., 100., 130.]
 
-    for i in listalistosa:
-        num_subpop1 = i*5
-        num_subpop2 = i*15
-        num_subpop3 = i*10
+    for i, omegaconst in enumerate(listalistosa):
+        num_subpop1 = 20
+        num_subpop2 = 40
+        num_subpop3 = 30
 
         print(f'\nTrial Number {i}\n')
 
@@ -413,10 +418,11 @@ if __name__ == "__main__":
         print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
 
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True)
+        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True, omegaconst=omegaconst)
 
         print(f'Coupling constants are:\n{coupconsts}\n')
         print(f'Phase delay constants are:\n{alphas}\n')
+        print(f'Natural Frequencies are: \n{omegas}\n')
 
         init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
         times = kuramotosakaguchi.settimes(0., 10., 1000)
@@ -436,8 +442,7 @@ if __name__ == "__main__":
         print(f'SubPop 2 frequency: {frequencies[1]}')
         print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
 
-        #kuramotosakaguchi.psdofordparam()
-        #kuramotosakaguchi.showplots()
+        kuramotosakaguchi.psdofordparam(save=True, num_trial=i)
         
         output_simulation_sub1_sync.append(numpy.mean(syncs[0][300:]))
         output_simulation_sub2_sync.append(numpy.mean(syncs[1][300:]))
@@ -448,7 +453,7 @@ if __name__ == "__main__":
         output_simulation_sub3_freq.append(frequencies[2])
 
     plt.figure(1, figsize=(13,6))
-    plt.title('Sync. Param vs i; NumPop1=i*5, NumPop2=i*15, NumPop3=i*10')
+    plt.title('Sync. Param vs i; Omega1=i*2, Omega2=i, Omega3=i*1.35')
     plt.plot(listalistosa, output_simulation_sub1_sync, label='Pop. 1')
     plt.plot(listalistosa, output_simulation_sub2_sync, label='Pop. 2')
     plt.plot(listalistosa, output_simulation_sub3_sync, label='Pop. 3')
@@ -460,7 +465,7 @@ if __name__ == "__main__":
 
 
     plt.figure(2, figsize=(13,6))
-    plt.title('Sync. Frequencies vs i; NumPop1=i*5, NumPop2=i*15, NumPop3=i*10')
+    plt.title('Sync. Frequencies vs i; Omega1=i*2, Omega2=i, Omega3=i*1.35')
     plt.plot(listalistosa, output_simulation_sub1_freq, label='Pop. 1')
     plt.plot(listalistosa, output_simulation_sub2_freq, label='Pop. 2')
     plt.plot(listalistosa, output_simulation_sub3_freq, label='Pop. 3')
