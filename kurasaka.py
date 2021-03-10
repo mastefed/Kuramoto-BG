@@ -384,7 +384,7 @@ if __name__ == "__main__":
     output_simulation_sub2_freq = []
     output_simulation_sub3_freq = []
 
-    listalistosa = [1, 2]
+    listalistosa = [1, 2, 3, 4, 5, 6, 7]
 
     for i in listalistosa:
         num_subpop1 = i*5
