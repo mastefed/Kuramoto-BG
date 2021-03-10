@@ -219,13 +219,13 @@ class kurasaka_oscillators:
 
         return self.real_ordparam_subpop1, self.real_ordparam_subpop2, self.real_ordparam_subpop3
 
-    def psdofordparam(self, save, num_trial):
+    def psdofordparam(self, save, num_trial, omegaconst):
         self.freq1, self.psd1 = welch(self.real_ordparam_subpop1, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq2, self.psd2 = welch(self.real_ordparam_subpop2, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq3, self.psd3 = welch(self.real_ordparam_subpop3, fs=1/((self.time_end - self.time_start)/self.time_points))
 
         plt.figure(f'PSD{num_trial}', figsize=(6,6))
-        plt.title('PSD of Re[Z]')
+        plt.title(f'PSD of Re[Z]; Omega1={omegaconst}*2, Omega2={omegaconst}, Omega3={omegaconst}*1.35')
         plt.xlabel('Frequencies [Hz]')
         plt.ylabel('PSD')
         plt.grid()
@@ -442,7 +442,7 @@ if __name__ == "__main__":
         print(f'SubPop 2 frequency: {frequencies[1]}')
         print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
 
-        kuramotosakaguchi.psdofordparam(save=True, num_trial=i)
+        kuramotosakaguchi.psdofordparam(save=True, num_trial=i, omegaconst=omegaconst)
         
         output_simulation_sub1_sync.append(numpy.mean(syncs[0][300:]))
         output_simulation_sub2_sync.append(numpy.mean(syncs[1][300:]))
@@ -452,7 +452,7 @@ if __name__ == "__main__":
         output_simulation_sub2_freq.append(frequencies[1])
         output_simulation_sub3_freq.append(frequencies[2])
 
-    plt.figure(1, figsize=(13,6))
+    plt.figure('SyncVi', figsize=(13,6))
     plt.title('Sync. Param vs i; Omega1=i*2, Omega2=i, Omega3=i*1.35')
     plt.plot(listalistosa, output_simulation_sub1_sync, label='Pop. 1')
     plt.plot(listalistosa, output_simulation_sub2_sync, label='Pop. 2')
@@ -464,7 +464,7 @@ if __name__ == "__main__":
     plt.savefig(f'/home/f_mastellone/Images/syncvsi.png')
 
 
-    plt.figure(2, figsize=(13,6))
+    plt.figure('FreqVi', figsize=(13,6))
     plt.title('Sync. Frequencies vs i; Omega1=i*2, Omega2=i, Omega3=i*1.35')
     plt.plot(listalistosa, output_simulation_sub1_freq, label='Pop. 1')
     plt.plot(listalistosa, output_simulation_sub2_freq, label='Pop. 2')
