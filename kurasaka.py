@@ -404,7 +404,7 @@ if __name__ == "__main__":
     output_simulation_sub2_freq = []
     output_simulation_sub3_freq = []
 
-    listalistosa = [20., 40., 70., 100., 130.]
+    listalistosa = [20., 30., 40., 60., 70., 100., 130., 150.]
 
     for i, omegaconst in enumerate(listalistosa):
         num_subpop1 = 20
