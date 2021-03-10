@@ -90,9 +90,9 @@ class kurasaka_oscillators:
             [self.alpha31, self.alpha32, self.alpha33]
         ])
 
-        self.omega1 = cauchy.rvs(loc=omegaconst*2., scale=.1, size=self.N1) # 143.
-        self.omega2 = cauchy.rvs(loc=omegaconst, scale=.1, size=self.N2) # 71.
-        self.omega3 = cauchy.rvs(loc=omegaconst*1.35, scale=.1, size=self.N3) # 95.
+        self.omega1 = cauchy.rvs(loc=omegaconst*2., scale=.5, size=self.N1) # 143.
+        self.omega2 = cauchy.rvs(loc=omegaconst, scale=.5, size=self.N2) # 71.
+        self.omega3 = cauchy.rvs(loc=omegaconst*1.35, scale=.5, size=self.N3) # 95.
 
         self.omegamatrix = numpy.hstack((numpy.hstack((self.omega1, self.omega2)), self.omega3))
 
