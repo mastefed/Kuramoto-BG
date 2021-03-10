@@ -384,12 +384,12 @@ if __name__ == "__main__":
     output_simulation_sub2_freq = []
     output_simulation_sub3_freq = []
 
-    listalistosa = [1, 2, 3, 4]
+    listalistosa = [1, 2]
 
     for i in listalistosa:
-        num_subpop1 = i*10
-        num_subpop2 = i*30
-        num_subpop3 = i*20
+        num_subpop1 = i*5
+        num_subpop2 = i*15
+        num_subpop3 = i*10
 
         print(f'\nTrial Number {i}\n')
 
