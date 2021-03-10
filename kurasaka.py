@@ -90,9 +90,9 @@ class kurasaka_oscillators:
             [self.alpha31, self.alpha32, self.alpha33]
         ])
 
-        self.omega1 = cauchy.rvs(loc=omegaconst*2., scale=2., size=self.N1) # 143.
-        self.omega2 = cauchy.rvs(loc=omegaconst, scale=2., size=self.N2) # 71.
-        self.omega3 = cauchy.rvs(loc=omegaconst*1.35, scale=2., size=self.N3) # 95.
+        self.omega1 = cauchy.rvs(loc=omegaconst*2., scale=1., size=self.N1) # 143.
+        self.omega2 = cauchy.rvs(loc=omegaconst, scale=1., size=self.N2) # 71.
+        self.omega3 = cauchy.rvs(loc=omegaconst*1.35, scale=1., size=self.N3) # 95.
 
         self.omegamatrix = numpy.hstack((numpy.hstack((self.omega1, self.omega2)), self.omega3))
 
@@ -224,7 +224,7 @@ class kurasaka_oscillators:
         self.freq2, self.psd2 = welch(self.real_ordparam_subpop2, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq3, self.psd3 = welch(self.real_ordparam_subpop3, fs=1/((self.time_end - self.time_start)/self.time_points))
 
-        plt.figure('PSD', figsize=(6,6))
+        plt.figure(f'PSD{num_trial}', figsize=(6,6))
         plt.title('PSD of Re[Z]')
         plt.xlabel('Frequencies [Hz]')
         plt.ylabel('PSD')
