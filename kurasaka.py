@@ -396,7 +396,7 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    parametroproporzionalità = [1, 2, 3, 4, 5, 6]
+    parametroproporzionalità = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     sync1 = []
     sync2 = []
@@ -406,10 +406,11 @@ if __name__ == "__main__":
     freq3 = []
 
     for i in parametroproporzionalità:
-        num_subpop1 = i*5
-        num_subpop2 = i*25
-        num_subpop3 = i*15
+        num_subpop1 = i*5 #20
+        num_subpop2 = num_subpop1 + 20 #40
+        num_subpop3 = num_subpop1 + 10 #30
 
+        print(f'Num Trial {i}\n')
         print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
         print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
         print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
@@ -419,7 +420,7 @@ if __name__ == "__main__":
 
         print(f'Coupling constants are:\n{coupconsts}\n')
         print(f'Phase delay constants are:\n{alphas}\n')
-        print(f'Natural Frequencies are: \n{omegas}\n')
+        #print(f'Natural Frequencies are: \n{omegas}\n')
 
         init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
         times = kuramotosakaguchi.settimes(0., 10., 1000)
