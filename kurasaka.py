@@ -396,7 +396,7 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    parametroproporzionalità = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    parametroproporzionalità = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
     sync1 = []
     sync2 = []
@@ -450,7 +450,7 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(13,6))
 
-    plt.suptitle('NumPop1=i*5; NumPop2=i*25; NumPop3=i*15')
+    plt.suptitle('NumPop1=i*5; NumPop2=NumPop1+20; NumPop3=NumPop1+10')
     plt.subplot(121)
     plt.title('Sync vs i')
     plt.plot(parametroproporzionalità, sync1, label='Pop1')
