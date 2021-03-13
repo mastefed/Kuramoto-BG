@@ -27,7 +27,7 @@ class kurasaka_oscillators:
 
         return self.initialvalues
 
-    def setmodelconstants(self, fixed, omegaconst):
+    def setmodelconstants(self, fixed):
         if fixed == False:
             print("Please, choose the intra-subpopulations' coupling constants:")
             self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
@@ -90,9 +90,9 @@ class kurasaka_oscillators:
             [self.alpha31, self.alpha32, self.alpha33]
         ])
 
-        self.omega1 = cauchy.rvs(loc=omegaconst*2., scale=.2, size=self.N1) # 143.
-        self.omega2 = cauchy.rvs(loc=omegaconst, scale=.2, size=self.N2) # 71.
-        self.omega3 = cauchy.rvs(loc=omegaconst*1.35, scale=.2, size=self.N3) # 95.
+        self.omega1 = cauchy.rvs(loc=143., scale=.2, size=self.N1)
+        self.omega2 = cauchy.rvs(loc=71., scale=.2, size=self.N2)
+        self.omega3 = cauchy.rvs(loc=95., scale=.2, size=self.N3)
 
         self.omegamatrix = numpy.hstack((numpy.hstack((self.omega1, self.omega2)), self.omega3))
 
@@ -219,13 +219,13 @@ class kurasaka_oscillators:
 
         return self.real_ordparam_subpop1, self.real_ordparam_subpop2, self.real_ordparam_subpop3
 
-    def psdofordparam(self, save, num_trial, omegaconst):
+    def psdofordparam(self, save):
         self.freq1, self.psd1 = welch(self.real_ordparam_subpop1, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq2, self.psd2 = welch(self.real_ordparam_subpop2, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq3, self.psd3 = welch(self.real_ordparam_subpop3, fs=1/((self.time_end - self.time_start)/self.time_points))
 
-        plt.figure(f'PSD{num_trial}', figsize=(6,6))
-        plt.title(f'PSD of Re[Z]; Omega1={omegaconst}*2, Omega2={omegaconst}, Omega3={omegaconst}*1.35')
+        plt.figure('PSD', figsize=(6,6))
+        plt.title('PSD of Re[Z]')
         plt.xlabel('Frequencies [Hz]')
         plt.ylabel('PSD')
         plt.grid()
@@ -235,7 +235,7 @@ class kurasaka_oscillators:
         plt.legend()
 
         if save == True:
-            plt.savefig(f'/home/f_mastellone/Images/PSD{num_trial}.png')
+            plt.savefig(f'/home/f_mastellone/Images/PSD.png')
         elif save == False:
             pass
 
@@ -273,9 +273,9 @@ class kurasaka_oscillators:
         
         return self.mean_frequencies
 
-    def printsyncparam(self, num_trial, save):
-        plt.figure(f'{self.N} Oscillators Sync; Trial {num_trial}', figsize=(13,6))
-        plt.title(f'{self.N} Oscillators Sync; Trial {num_trial}')
+    def printsyncparam(self, save):
+        plt.figure(f'{self.N} Oscillators Sync', figsize=(13,6))
+        plt.title(f'{self.N} Oscillators Sync')
         plt.plot(self.times, self.sync_subpop1, label='SubPop 1')
         plt.plot(self.times, self.sync_subpop2, label='SubPop 2')
         plt.plot(self.times, self.sync_subpop3, label='SubPop 3')
@@ -285,13 +285,13 @@ class kurasaka_oscillators:
         plt.yticks(numpy.arange(0, 1.1, step=0.1))
         plt.legend()
         if save == True:
-            plt.savefig(f'/home/f_mastellone/Images/SyncTrial{num_trial}.png')
+            plt.savefig('/home/f_mastellone/Images/SyncTrial.png')
         elif save == False:
             pass
 
-    def printcosineordparam(self, num_trial, save):
-        plt.figure(f"Subpops' Phase Evolution; Trial {num_trial}", figsize=(13,6))
-        plt.title(f"Subpops' Phase Evolution; Trial {num_trial}")
+    def printcosineordparam(self, save):
+        plt.figure(f"Subpops' Phase Evolution", figsize=(13,6))
+        plt.title(f"Subpops' Phase Evolution; Trial")
         plt.plot(self.times, self.real_ordparam_subpop1, label='SubPop 1')
         plt.plot(self.times, self.real_ordparam_subpop2, label='SubPop 2')
         plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
@@ -299,7 +299,7 @@ class kurasaka_oscillators:
         plt.xlim([0.,2.3])
         plt.legend()
         if save == True:
-            plt.savefig(f'/home/f_mastellone/Images/CosOrdParTrial{num_trial}.png')
+            plt.savefig('/home/f_mastellone/Images/CosOrdParTrial.png')
         elif save == False:
             pass
 
@@ -396,29 +396,26 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    output_simulation_sub1_sync = []
-    output_simulation_sub2_sync = []
-    output_simulation_sub3_sync = []
+    parametroproporzionalità = [1, 2, 3, 4, 5, 6]
 
-    output_simulation_sub1_freq = []
-    output_simulation_sub2_freq = []
-    output_simulation_sub3_freq = []
+    sync1 = []
+    sync2 = []
+    sync3 = []
+    freq1 = []
+    freq2 = []
+    freq3 = []
 
-    listalistosa = [20., 30., 40., 60., 70., 100., 130., 150.]
-
-    for i, omegaconst in enumerate(listalistosa):
-        num_subpop1 = 20
-        num_subpop2 = 40
-        num_subpop3 = 30
-
-        print(f'\nTrial Number {i}\n')
+    for i in parametroproporzionalità:
+        num_subpop1 = i*5
+        num_subpop2 = i*25
+        num_subpop3 = i*15
 
         print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
         print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
         print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
 
         kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True, omegaconst=omegaconst)
+        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True)
 
         print(f'Coupling constants are:\n{coupconsts}\n')
         print(f'Phase delay constants are:\n{alphas}\n')
@@ -436,41 +433,43 @@ if __name__ == "__main__":
         print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
 
         kuramotosakaguchi.ordparam_phase()
-
         frequencies = kuramotosakaguchi.findperiod()
         print(f'SubPop 1 frequency: {frequencies[0]}')
         print(f'SubPop 2 frequency: {frequencies[1]}')
         print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
 
-        kuramotosakaguchi.psdofordparam(save=True, num_trial=i, omegaconst=omegaconst)
-        
-        output_simulation_sub1_sync.append(numpy.mean(syncs[0][300:]))
-        output_simulation_sub2_sync.append(numpy.mean(syncs[1][300:]))
-        output_simulation_sub3_sync.append(numpy.mean(syncs[2][300:]))
+        # kuramotosakaguchi.psdofordparam(save=True)
 
-        output_simulation_sub1_freq.append(frequencies[0])
-        output_simulation_sub2_freq.append(frequencies[1])
-        output_simulation_sub3_freq.append(frequencies[2])
+        sync1.append(numpy.mean(syncs[0][300:]))
+        sync2.append(numpy.mean(syncs[1][300:]))
+        sync3.append(numpy.mean(syncs[2][300:]))
+        freq1.append(frequencies[0])
+        freq2.append(frequencies[1])
+        freq3.append(frequencies[2])
 
-    plt.figure('SyncVi', figsize=(13,6))
-    plt.title('Sync. Param vs i; Omega1=i*2, Omega2=i, Omega3=i*1.35')
-    plt.plot(listalistosa, output_simulation_sub1_sync, label='Pop. 1')
-    plt.plot(listalistosa, output_simulation_sub2_sync, label='Pop. 2')
-    plt.plot(listalistosa, output_simulation_sub3_sync, label='Pop. 3')
-    plt.xlabel('Index i')
-    plt.ylabel('Sync.')
-    plt.legend()
+    plt.figure(figsize=(13,6))
+
+    plt.suptitle('NumPop1=i*5; NumPop2=i*25; NumPop3=i*15')
+    plt.subplot(121)
+    plt.title('Sync vs i')
+    plt.plot(parametroproporzionalità, sync1, label='Pop1')
+    plt.plot(parametroproporzionalità, sync2, label='Pop2')
+    plt.plot(parametroproporzionalità, sync3, label='Pop3')
+    plt.ylim((0.3, 1.))
+    plt.xlabel('i')
+    plt.ylabel('Sync. Parameter')
     plt.grid()
-    plt.savefig(f'/home/f_mastellone/Images/syncvsi.png')
-
-
-    plt.figure('FreqVi', figsize=(13,6))
-    plt.title('Sync. Frequencies vs i; Omega1=i*2, Omega2=i, Omega3=i*1.35')
-    plt.plot(listalistosa, output_simulation_sub1_freq, label='Pop. 1')
-    plt.plot(listalistosa, output_simulation_sub2_freq, label='Pop. 2')
-    plt.plot(listalistosa, output_simulation_sub3_freq, label='Pop. 3')
-    plt.xlabel('Index i')
-    plt.ylabel('Sync. Frequencies')
     plt.legend()
+
+    plt.subplot(122)
+    plt.title('Sync. Freq. vs i')
+    plt.plot(parametroproporzionalità, freq1, label='Pop1')
+    plt.plot(parametroproporzionalità, freq2, label='Pop2')
+    plt.plot(parametroproporzionalità, freq3, label='Pop3')
+    plt.ylim((10., 20.))
+    plt.xlabel('i')
+    plt.ylabel('Sync. Freq. Parameter')
     plt.grid()
-    plt.savefig(f'/home/f_mastellone/Images/freqvsi.png')
+    plt.legend()
+
+    plt.savefig('/home/f_mastellone/Images/syncfreqvsi.png')
