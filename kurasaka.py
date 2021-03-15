@@ -372,7 +372,7 @@ class kurasaka_oscillators:
     def saveanimation(self, myanimation, save_path):
         print('\nVideo Processing started!')
         Writer = animation.writers['ffmpeg']
-        writer = Writer(fps=15, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
+        writer = Writer(fps=30, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
         myanimation.save(save_path, writer=writer)
         print('Task finished.')
 
@@ -396,81 +396,38 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    parametroproporzionalità = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    num_subpop1 = 20
+    num_subpop2 = 40
+    num_subpop3 = 30
 
-    sync1 = []
-    sync2 = []
-    sync3 = []
-    freq1 = []
-    freq2 = []
-    freq3 = []
+    print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
+    print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
+    print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
 
-    for i in parametroproporzionalità:
-        num_subpop1 = i*5 #20
-        num_subpop2 = num_subpop1 + 20 #40
-        num_subpop3 = num_subpop1 + 10 #30
+    kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
+    coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True)
 
-        print(f'Num Trial {i}\n')
-        print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
-        print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
-        print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
+    print(f'Coupling constants are:\n{coupconsts}\n')
+    print(f'Phase delay constants are:\n{alphas}\n')
+    #print(f'Natural Frequencies are: \n{omegas}\n')
 
-        kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True)
+    init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
+    times = kuramotosakaguchi.settimes(0., 10., 1000)
 
-        print(f'Coupling constants are:\n{coupconsts}\n')
-        print(f'Phase delay constants are:\n{alphas}\n')
-        #print(f'Natural Frequencies are: \n{omegas}\n')
+    equations = kuramotosakaguchi.kurasaka_function
+    phasesevolution = kuramotosakaguchi.evolve(equations)
+    syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
 
-        init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
-        times = kuramotosakaguchi.settimes(0., 10., 1000)
+    print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
+    print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
+    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
 
-        equations = kuramotosakaguchi.kurasaka_function
-        phasesevolution = kuramotosakaguchi.evolve(equations)
-        syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
+    kuramotosakaguchi.ordparam_phase()
+    frequencies = kuramotosakaguchi.findperiod()
+    print(f'SubPop 1 frequency: {frequencies[0]}')
+    print(f'SubPop 2 frequency: {frequencies[1]}')
+    print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
 
-        print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
-        print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
-        print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
-
-        kuramotosakaguchi.ordparam_phase()
-        frequencies = kuramotosakaguchi.findperiod()
-        print(f'SubPop 1 frequency: {frequencies[0]}')
-        print(f'SubPop 2 frequency: {frequencies[1]}')
-        print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
-
-        # kuramotosakaguchi.psdofordparam(save=True)
-
-        sync1.append(numpy.mean(syncs[0][300:]))
-        sync2.append(numpy.mean(syncs[1][300:]))
-        sync3.append(numpy.mean(syncs[2][300:]))
-        freq1.append(frequencies[0])
-        freq2.append(frequencies[1])
-        freq3.append(frequencies[2])
-
-    plt.figure(figsize=(13,6))
-
-    plt.suptitle('NumPop1=i*5; NumPop2=NumPop1+20; NumPop3=NumPop1+10')
-    plt.subplot(121)
-    plt.title('Sync vs i')
-    plt.plot(parametroproporzionalità, sync1, label='Pop1')
-    plt.plot(parametroproporzionalità, sync2, label='Pop2')
-    plt.plot(parametroproporzionalità, sync3, label='Pop3')
-    plt.ylim((0.3, 1.))
-    plt.xlabel('i')
-    plt.ylabel('Sync. Parameter')
-    plt.grid()
-    plt.legend()
-
-    plt.subplot(122)
-    plt.title('Sync. Freq. vs i')
-    plt.plot(parametroproporzionalità, freq1, label='Pop1')
-    plt.plot(parametroproporzionalità, freq2, label='Pop2')
-    plt.plot(parametroproporzionalità, freq3, label='Pop3')
-    plt.ylim((10., 20.))
-    plt.xlabel('i')
-    plt.ylabel('Sync. Freq. Parameter')
-    plt.grid()
-    plt.legend()
-
-    plt.savefig('/home/f_mastellone/Images/syncfreqvsi.png')
+    # kuramotosakaguchi.psdofordparam(save=True)
+    myanim = kuramotosakaguchi.animateoscillators()
+    kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videovideovideo.mp3')
