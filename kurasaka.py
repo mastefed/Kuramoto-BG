@@ -4,6 +4,7 @@ class kurasaka_oscillators:
         self.N2 = num_subpop2
         self.N3 = num_subpop3
         self.N = self.N1 + self.N2 + self.N3
+        self.Narray = [self.N1, self.N2, self.N3]
         self.reproducible_rng = numpy.random.default_rng(42)
         self.notreproducible_rng = numpy.random.default_rng()
 
@@ -17,7 +18,7 @@ class kurasaka_oscillators:
     def setinitialconditions(self, clustered):
         if clustered == False:
             self.initialvalues = 2*numpy.pi*self.reproducible_rng.random(self.N) # random conditions of phases between 0 and 2pi
-        
+
         elif clustered == True:
             self.init_values_N1 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N1)
             self.init_values_N2 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N2)
@@ -56,16 +57,16 @@ class kurasaka_oscillators:
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
         if fixed == True:
-            self.k11 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k11 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
             self.k22 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k33 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            
-            self.k12 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k13 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k21 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k23 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k31 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k32 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k33 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+
+            self.k12 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k13 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k21 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k23 = 20. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k31 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k32 = 20. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
 
             self.alpha11 = 0. #self.notreproducible_rng.random()
             self.alpha22 = 0. #self.notreproducible_rng.random()
@@ -78,13 +79,13 @@ class kurasaka_oscillators:
             self.alpha31 = 0. #self.notreproducible_rng.random()
             self.alpha32 = 0. #self.notreproducible_rng.random()
 
-        self.kmatrix = numpy.array([
+        self.kmatrix = numpy.matrix([
             [self.k11, self.k12, self.k13],
             [self.k21, self.k22, self.k23],
             [self.k31, self.k32, self.k33]
         ])
 
-        self.alphamatrix = numpy.array([
+        self.alphamatrix = numpy.matrix([
             [self.alpha11, self.alpha12, self.alpha13],
             [self.alpha21, self.alpha22, self.alpha23],
             [self.alpha31, self.alpha32, self.alpha33]
@@ -110,46 +111,9 @@ class kurasaka_oscillators:
             self.variables[f'theta3{i}'] = x[self.N1 + self.N2 + i]
 
         def interaction(k, z):
-            if k == 1:
-                num = self.N1
-                if z == 1:
-                    coupconst = self.k11
-                    delayterm = self.alpha11
-                elif z == 2:
-                    coupconst = self.k21
-                    delayterm = self.alpha21
-                elif z == 3:
-                    coupconst = self.k31
-                    delayterm = self.alpha31
-                    
-            elif k == 2:
-                num = self.N2
-                if z == 1:
-                    coupconst = self.k12
-                    delayterm = self.alpha12
-                elif z == 2:
-                    coupconst = self.k22
-                    delayterm = self.alpha22
-                elif z == 3:
-                    coupconst = self.k32
-                    delayterm = self.alpha32
-
-            elif k == 3:
-                num = self.N3
-                if z == 1:
-                    coupconst = self.k13
-                    delayterm = self.alpha13
-                elif z == 2:
-                    coupconst = self.k23
-                    delayterm = self.alpha23
-                elif z == 3:
-                    coupconst = self.k33
-                    delayterm = self.alpha33
-
             interaction_terms = 0.
-            for j in range(num):
-                interaction_terms += coupconst/num*numpy.sin(self.variables[f'theta{k}{j}'] - self.variables[f'theta{z}{i}'] - delayterm)
-
+            for j in range(self.Narray[k-1]):
+                interaction_terms += self.kmatrix[z-1,k-1]/self.Narray[k-1]*numpy.sin(self.variables[f'theta{k}{j}'] - self.variables[f'theta{z}{i}'] - self.alphamatrix[z-1,k-1])
             return interaction_terms
 
         self.dthetadt = [] # Creates and updates the values' array with the desired differential equations
@@ -198,8 +162,30 @@ class kurasaka_oscillators:
 
         self.syncs = [self.sync_subpop1, self.sync_subpop2, self.sync_subpop3]
         self.orderparameters = [self.orderparameter_subpop1, self.orderparameter_subpop2, self.orderparameter_subpop3]
-        
+
         return self.syncs, self.orderparameters # returns |Z| and Z, both can be useful
+
+    def findglobalorderparameter(self):
+        def mediationterm(sigma, tau):
+            mediation = self.kmatrix[sigma,tau]/self.kmatrix.sum()*numpy.exp(complex(0,-self.alphamatrix[sigma,tau]))
+            return mediation
+
+        self.globalorderparameter = []
+
+        for i in range(len(self.times)):
+            partialglobalorderparam = 0.
+            for sigma in range(3):
+                for tau in range(3):
+                    partialglobalorderparam += mediationterm(sigma,tau)*self.orderparameters[tau][i]
+            self.globalorderparameter.append(partialglobalorderparam)
+
+        self.sync_global = []
+        self.phase_global = []
+        for i in range(len(self.globalorderparameter)):
+            self.sync_global.append( numpy.sqrt(self.globalorderparameter[i].real**2 + self.globalorderparameter[i].imag**2) )
+            self.phase_global.append(numpy.angle(self.globalorderparameter[i]))
+
+        return self.sync_global, self.globalorderparameter
 
     def ordparam_phase(self):
         self.real_ordparam_subpop1 = []
@@ -235,7 +221,7 @@ class kurasaka_oscillators:
         plt.legend()
 
         if save == True:
-            plt.savefig(f'/home/f_mastellone/Images/PSD.png')
+            plt.savefig('C:/Users/feder/Desktop/PSD.png')
         elif save == False:
             pass
 
@@ -270,7 +256,7 @@ class kurasaka_oscillators:
         self.mean_frequency_subpop3 = numpy.mean(self.periods_subpop3)
 
         self.mean_frequencies = [self.mean_frequency_subpop1, self.mean_frequency_subpop2, self.mean_frequency_subpop3]
-        
+
         return self.mean_frequencies
 
     def printsyncparam(self, save):
@@ -279,37 +265,64 @@ class kurasaka_oscillators:
         plt.plot(self.times, self.sync_subpop1, label='SubPop 1')
         plt.plot(self.times, self.sync_subpop2, label='SubPop 2')
         plt.plot(self.times, self.sync_subpop3, label='SubPop 3')
+        plt.plot(self.times, self.sync_global, label='Global')
         plt.xlabel('Time Steps')
         plt.ylabel('R')
         plt.ylim([0.,1.])
         plt.yticks(numpy.arange(0, 1.1, step=0.1))
-        plt.legend()
+        plt.legend(loc='lower left')
+        
+        plt.axes([.55, .20, .3, .3])
+        plt.plot(self.times, self.sync_subpop1, label='SubPop 1')
+        plt.plot(self.times, self.sync_subpop2, label='SubPop 2')
+        plt.plot(self.times, self.sync_subpop3, label='SubPop 3')
+        plt.plot(self.times, self.sync_global, label='Global')
+        plt.xlim([1.,1.5])
+        plt.xticks([1.1, 1.2, 1.3, 1.4])
+        plt.yticks([.2, .4, .6, .8, 1.])
+        plt.tick_params(axis='x', direction='in', pad=-15)
+        plt.tick_params(axis='y', direction='in', pad=-22)
+        
         if save == True:
             plt.savefig('/home/f_mastellone/Images/SyncTrial.png')
         elif save == False:
             pass
 
     def printcosineordparam(self, save):
-        plt.figure(f"Subpops' Phase Evolution", figsize=(13,6))
-        plt.title(f"Subpops' Phase Evolution; Trial")
+        plt.figure("Subpops' Phase Evolution", figsize=(13,6))
+        plt.title("Subpops' Phase Evolution")
         plt.plot(self.times, self.real_ordparam_subpop1, label='SubPop 1')
         plt.plot(self.times, self.real_ordparam_subpop2, label='SubPop 2')
         plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
         plt.xlabel('Time Steps')
-        plt.xlim([0.,2.3])
-        plt.legend()
+        plt.xlim([0.,2.])
+        plt.legend(loc='lower left')
+        
+        plt.axes([.55, .55, .3, .3])
+        plt.plot(self.times, self.real_ordparam_subpop1, label='SubPop 1')
+        plt.plot(self.times, self.real_ordparam_subpop2, label='SubPop 2')
+        plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
+        plt.xlim([1.,1.2])
+        plt.ylim([-1.3,1.1])
+        plt.xticks([1.025, 1.050, 1.075, 1.100, 1.125, 1.150, 1.175])
+        plt.yticks([])
+        plt.grid()
+        plt.tick_params(axis='x', direction='in', pad=-15)
+        plt.tick_params(axis='y', direction='in', pad=-22)
+        
         if save == True:
             plt.savefig('/home/f_mastellone/Images/CosOrdParTrial.png')
         elif save == False:
             pass
 
-    def animate_function(self, i): 
+    def animate_function(self, i):
         self.phases = self.kurasaka_evo[i:i+1]
         self.timestep = self.times[0:i]
         self.R1 = self.sync_subpop1[0:i]
         self.R2 = self.sync_subpop2[0:i]
         self.R3 = self.sync_subpop3[0:i]
-        
+        self.RGlob = self.sync_global[0:i]
+
         self.imphasedict = {}
         self.rephasedict = {}
 
@@ -319,12 +332,15 @@ class kurasaka_oscillators:
 
         self.imagpart_ordparam_subpop1 = self.orderparameter_subpop1[i].imag
         self.realpart_ordparam_subpop1 = self.orderparameter_subpop1[i].real
-        
+
         self.imagpart_ordparam_subpop2 = self.orderparameter_subpop2[i].imag
         self.realpart_ordparam_subpop2 = self.orderparameter_subpop2[i].real
 
         self.imagpart_ordparam_subpop3 = self.orderparameter_subpop3[i].imag
         self.realpart_ordparam_subpop3 = self.orderparameter_subpop3[i].real
+
+        self.imagpart_global_ordparam = self.globalorderparameter[i].imag
+        self.realpart_global_ordparam = self.globalorderparameter[i].real
 
         ticks = [-0.8, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 0.8]
 
@@ -341,12 +357,17 @@ class kurasaka_oscillators:
         self.ax1.xaxis.set_ticks(ticks)
         self.ax1.set_xlabel('Re', loc='right')
         self.ax1.set_ylabel('Im', loc='top')
-        
+
         self.ax1.arrow(0., 0., self.realpart_ordparam_subpop1, self.imagpart_ordparam_subpop1, head_width=0.02, head_length=0.05, fc='b', ec='b', lw=1., label='Z Pop. 1')
         self.ax1.arrow(0., 0., self.realpart_ordparam_subpop2, self.imagpart_ordparam_subpop2, head_width=0.02, head_length=0.05, fc='g', ec='g', lw=1., label='Z Pop. 2')
-        self.ax1.arrow(0., 0., self.realpart_ordparam_subpop3, self.imagpart_ordparam_subpop3, head_width=0.02, head_length=0.05, fc='r', ec='r', lw=1., label='Z Pop. 3')   
-        for k in range(self.N):
-            self.ax1.plot(self.rephasedict[f're_x{k}'], self.imphasedict[f'im_x{k}'], 'o', ms=7.)
+        self.ax1.arrow(0., 0., self.realpart_ordparam_subpop3, self.imagpart_ordparam_subpop3, head_width=0.02, head_length=0.05, fc='r', ec='r', lw=1., label='Z Pop. 3')
+        self.ax1.arrow(0., 0., self.realpart_global_ordparam, self.imagpart_global_ordparam, head_width=0.02, head_length=0.05, fc='k', ec='k', lw=1.3, label='Z Global')
+        for k in range(self.N1):
+            self.ax1.plot(self.rephasedict[f're_x{k}'], self.imphasedict[f'im_x{k}'], 'bo', ms=7.)
+        for k in range(self.N2):
+            self.ax1.plot(self.rephasedict[f're_x{self.N1 + k}'], self.imphasedict[f'im_x{self.N1 + k}'], 'go', ms=7.)
+        for k in range(self.N3):
+            self.ax1.plot(self.rephasedict[f're_x{self.N1 + self.N2 + k}'], self.imphasedict[f'im_x{self.N1 + self.N2 + k}'], 'ro', ms=7.)
         self.ax1.legend()
 
         self.ax2.clear()
@@ -358,6 +379,7 @@ class kurasaka_oscillators:
         self.ax2.plot(self.timestep, self.R1, label='Sync. Par. Pop. 1')
         self.ax2.plot(self.timestep, self.R2, label='Sync. Par. Pop. 2')
         self.ax2.plot(self.timestep, self.R3, label='Sync. Par. Pop. 3')
+        self.ax2.plot(self.timestep, self.RGlob, 'k', label='Global Sync.')
         self.ax2.legend()
 
     def animateoscillators(self):
@@ -368,7 +390,7 @@ class kurasaka_oscillators:
         self.animated = animation.FuncAnimation(self.fig, self.animate_function, frames = len(self.kurasaka_evo), interval=0.1)
 
         return self.animated
-  
+
     def saveanimation(self, myanimation, save_path):
         print('\nVideo Processing started!')
         Writer = animation.writers['ffmpeg']
@@ -409,7 +431,6 @@ if __name__ == "__main__":
 
     print(f'Coupling constants are:\n{coupconsts}\n')
     print(f'Phase delay constants are:\n{alphas}\n')
-    #print(f'Natural Frequencies are: \n{omegas}\n')
 
     init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
     times = kuramotosakaguchi.settimes(0., 10., 1000)
@@ -417,17 +438,22 @@ if __name__ == "__main__":
     equations = kuramotosakaguchi.kurasaka_function
     phasesevolution = kuramotosakaguchi.evolve(equations)
     syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
+    globsync, globordparam = kuramotosakaguchi.findglobalorderparameter()
 
     print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
     print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
-    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}\n')
+    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}')
+    print(f'Global Sync: {numpy.mean(globsync[300:])}\n')
 
     kuramotosakaguchi.ordparam_phase()
     frequencies = kuramotosakaguchi.findperiod()
     print(f'SubPop 1 frequency: {frequencies[0]}')
     print(f'SubPop 2 frequency: {frequencies[1]}')
-    print(f'SubPop 3 frequency: {frequencies[2]}\n\n')
+    print(f'SubPop 3 frequency: {frequencies[2]}\n')
 
-    # kuramotosakaguchi.psdofordparam(save=True)
-    myanim = kuramotosakaguchi.animateoscillators()
-    kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videovideovideo.mp3')
+    kuramotosakaguchi.printcosineordparam(save=False)
+    kuramotosakaguchi.printsyncparam(save=False)
+    kuramotosakaguchi.psdofordparam(save=False)
+    kuramotosakaguchi.showplots()
+    # myanim = kuramotosakaguchi.animateoscillators()
+    # kuramotosakaguchi.saveanimation(myanim, save_path='C:/Users/feder/Desktop/eheheh3.mp4')
