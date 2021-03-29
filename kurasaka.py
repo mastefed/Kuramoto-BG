@@ -38,10 +38,10 @@ class kurasaka_oscillators:
             print("\nNow, choose the inter-subpopulations' coupling constants:")
             self.k12 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 2 interaction: '))
             self.k13 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 3 interaction: '))
-            self.k21 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 1 interaction: '))
             self.k23 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 3 interaction: '))
-            self.k31 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 1 interaction: '))
-            self.k32 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 2 interaction: '))
+            self.k21 = self.k12
+            self.k31 = self.k13
+            self.k32 = self.k23
 
             print("\nThen, choose the intra-subpopulations' phase delay alpha:")
             self.alpha11 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 1 interaction: '))
@@ -57,27 +57,27 @@ class kurasaka_oscillators:
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
         if fixed == True:
-            self.k11 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k22 = 25. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k33 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k11 = 1.
+            self.k22 = 10. 
+            self.k33 = 15.
 
-            self.k12 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k13 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k21 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k23 = 20. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k31 = 5. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
-            self.k32 = 20. #numpy.abs(self.notreproducible_rng.normal(loc=mean_coupconst, scale=.05))
+            self.k12 = .5
+            self.k13 = .5
+            self.k23 = 15.
+            self.k21 = self.k12
+            self.k31 = self.k13
+            self.k32 = self.k23
 
-            self.alpha11 = 0. #self.notreproducible_rng.random()
-            self.alpha22 = 0. #self.notreproducible_rng.random()
-            self.alpha33 = 0. #self.notreproducible_rng.random()
+            self.alpha11 = 0.05 
+            self.alpha22 = 0.05 
+            self.alpha33 = 0.05
 
-            self.alpha12 = 0. #self.notreproducible_rng.random()
-            self.alpha13 = 0. #self.notreproducible_rng.random()
-            self.alpha21 = 0. #self.notreproducible_rng.random()
-            self.alpha23 = 0. #self.notreproducible_rng.random()
-            self.alpha31 = 0. #self.notreproducible_rng.random()
-            self.alpha32 = 0. #self.notreproducible_rng.random()
+            self.alpha12 = 0.2
+            self.alpha13 = 0.5
+            self.alpha21 = 1.2
+            self.alpha23 = 0.5
+            self.alpha31 = 0.5
+            self.alpha32 = 0.5
 
         self.kmatrix = numpy.matrix([
             [self.k11, self.k12, self.k13],
@@ -133,10 +133,21 @@ class kurasaka_oscillators:
                 self.omega3[i] + interaction(1, 3) + interaction(2, 3) + interaction(3, 3)
             )
 
-        return self.dthetadt # returns the function to be put in .evolve()
+        return numpy.array(self.dthetadt) # returns the function to be put in .evolve()
 
     def evolve(self, function):
         self.kurasaka_evo = odeint(function, self.initialvalues, self.times)
+        return self.kurasaka_evo
+    
+    def evolvewithnoise(self, function):
+        def noise(x, t):
+            self.sigma = []
+            for i in range(self.N):
+                self.sigma.append(0.8)
+            self.sigma = numpy.diag(self.sigma)
+            return self.sigma
+        
+        self.kurasaka_evo = itoint(function, noise, self.initialvalues, self.times)
         return self.kurasaka_evo
 
     def findorderparameter(self, phases):
@@ -394,7 +405,7 @@ class kurasaka_oscillators:
     def saveanimation(self, myanimation, save_path):
         print('\nVideo Processing started!')
         Writer = animation.writers['ffmpeg']
-        writer = Writer(fps=30, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
+        writer = Writer(fps=120, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
         myanimation.save(save_path, writer=writer)
         print('Task finished.')
 
@@ -411,6 +422,8 @@ from scipy.integrate import odeint
 from scipy.stats import cauchy
 from scipy.signal import find_peaks, welch
 
+from sdeint import itoint
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Tool to simulate an arbitrary number of Kuramoto-Sakaguchi Oscillators.")
     parser.add_argument('--savepath', help='Where would you save the animated evolution?', type=str)
@@ -418,9 +431,9 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    num_subpop1 = 20
-    num_subpop2 = 40
-    num_subpop3 = 30
+    num_subpop1 = 1000
+    num_subpop2 = 3000
+    num_subpop3 = 60
 
     print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
     print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
@@ -433,10 +446,10 @@ if __name__ == "__main__":
     print(f'Phase delay constants are:\n{alphas}\n')
 
     init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
-    times = kuramotosakaguchi.settimes(0., 10., 1000)
+    times = kuramotosakaguchi.settimes(0., 20., 2000)
 
     equations = kuramotosakaguchi.kurasaka_function
-    phasesevolution = kuramotosakaguchi.evolve(equations)
+    phasesevolution = kuramotosakaguchi.evolvewithnoise(equations)
     syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
     globsync, globordparam = kuramotosakaguchi.findglobalorderparameter()
 
@@ -451,9 +464,9 @@ if __name__ == "__main__":
     print(f'SubPop 2 frequency: {frequencies[1]}')
     print(f'SubPop 3 frequency: {frequencies[2]}\n')
 
-    kuramotosakaguchi.printcosineordparam(save=False)
-    kuramotosakaguchi.printsyncparam(save=False)
-    kuramotosakaguchi.psdofordparam(save=False)
+    kuramotosakaguchi.printcosineordparam(save=True)
+    kuramotosakaguchi.printsyncparam(save=True)
+    kuramotosakaguchi.psdofordparam(save=True)
     kuramotosakaguchi.showplots()
-    # myanim = kuramotosakaguchi.animateoscillators()
-    # kuramotosakaguchi.saveanimation(myanim, save_path='C:/Users/feder/Desktop/eheheh3.mp4')
+    myanim = kuramotosakaguchi.animateoscillators()
+    kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videosimulazione.mp4')
