@@ -57,27 +57,27 @@ class kurasaka_oscillators:
             self.alpha32 = float(input('Choose alpha for subpopulation 3 <--> subpopulation 2 interaction: '))
 
         if fixed == True:
-            self.k11 = 1.
-            self.k22 = 10. 
-            self.k33 = 15.
+            self.k11 = 0.5
+            self.k22 = 0.5 
+            self.k33 = 0.2
 
-            self.k12 = .5
-            self.k13 = .5
-            self.k23 = 15.
+            self.k12 = 1.
+            self.k13 = 1.
+            self.k23 = 1.
             self.k21 = self.k12
             self.k31 = self.k13
             self.k32 = self.k23
 
-            self.alpha11 = 0.05 
-            self.alpha22 = 0.05 
-            self.alpha33 = 0.05
+            self.alpha11 = 0. 
+            self.alpha22 = 0. 
+            self.alpha33 = 0.
 
-            self.alpha12 = 0.2
-            self.alpha13 = 0.5
-            self.alpha21 = 1.2
-            self.alpha23 = 0.5
-            self.alpha31 = 0.5
-            self.alpha32 = 0.5
+            self.alpha12 = 0.
+            self.alpha13 = 0.
+            self.alpha21 = 0.
+            self.alpha23 = 0.
+            self.alpha31 = 0.
+            self.alpha32 = 0.
 
         self.kmatrix = numpy.matrix([
             [self.k11, self.k12, self.k13],
@@ -225,6 +225,7 @@ class kurasaka_oscillators:
         plt.title('PSD of Re[Z]')
         plt.xlabel('Frequencies [Hz]')
         plt.ylabel('PSD')
+        plt.xlim(0., 100.)
         plt.grid()
         plt.plot(self.freq1, self.psd1, label='Pop. 1')
         plt.plot(self.freq2, self.psd2, label='Pop. 2')
@@ -283,13 +284,13 @@ class kurasaka_oscillators:
         plt.yticks(numpy.arange(0, 1.1, step=0.1))
         plt.legend(loc='lower left')
         
-        plt.axes([.55, .20, .3, .3])
+        plt.axes([.69, .125, .2, .2])
         plt.plot(self.times, self.sync_subpop1, label='SubPop 1')
         plt.plot(self.times, self.sync_subpop2, label='SubPop 2')
         plt.plot(self.times, self.sync_subpop3, label='SubPop 3')
         plt.plot(self.times, self.sync_global, label='Global')
-        plt.xlim([1.,1.5])
-        plt.xticks([1.1, 1.2, 1.3, 1.4])
+        plt.xlim([5.,5.5])
+        plt.xticks([5.1, 5.2, 5.3, 5.4])
         plt.yticks([.2, .4, .6, .8, 1.])
         plt.tick_params(axis='x', direction='in', pad=-15)
         plt.tick_params(axis='y', direction='in', pad=-22)
@@ -306,16 +307,16 @@ class kurasaka_oscillators:
         plt.plot(self.times, self.real_ordparam_subpop2, label='SubPop 2')
         plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
         plt.xlabel('Time Steps')
-        plt.xlim([0.,2.])
+        plt.xlim([5.,7.])
         plt.legend(loc='lower left')
         
-        plt.axes([.55, .55, .3, .3])
+        plt.axes([.69, .125, .2, .2])
         plt.plot(self.times, self.real_ordparam_subpop1, label='SubPop 1')
         plt.plot(self.times, self.real_ordparam_subpop2, label='SubPop 2')
         plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
-        plt.xlim([1.,1.2])
+        plt.xlim([5.,5.2])
         plt.ylim([-1.3,1.1])
-        plt.xticks([1.025, 1.050, 1.075, 1.100, 1.125, 1.150, 1.175])
+        plt.xticks([5.025, 5.050, 5.075, 5.100, 5.125, 5.150, 5.175])
         plt.yticks([])
         plt.grid()
         plt.tick_params(axis='x', direction='in', pad=-15)
@@ -391,7 +392,7 @@ class kurasaka_oscillators:
             ax2.plot(timestep, R1, label='Sync. Par. Pop. 1')
             ax2.plot(timestep, R2, label='Sync. Par. Pop. 2')
             ax2.plot(timestep, R3, label='Sync. Par. Pop. 3')
-            ax2.plot(timestep, RGlob, 'k', label='Global Sync.')
+            ax2.plot(timestep, RGlob, label='Global Sync.')
             ax2.legend()
         
         
@@ -468,5 +469,5 @@ if __name__ == "__main__":
     kuramotosakaguchi.printcosineordparam(save=True)
     kuramotosakaguchi.printsyncparam(save=True)
     kuramotosakaguchi.psdofordparam(save=True)
-    myanim = kuramotosakaguchi.animateoscillators()
-    kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videosimulazioneprova.mp4')
+    #myanim = kuramotosakaguchi.animateoscillators()
+    #kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videosimulazioneprova.mp4')
