@@ -232,7 +232,7 @@ class kurasaka_oscillators:
         plt.legend()
 
         if save == True:
-            plt.savefig('C:/Users/feder/Desktop/PSD.png')
+            plt.savefig('/home/f_mastellone/Images/PSD.png')
         elif save == False:
             pass
 
@@ -432,8 +432,8 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    num_subpop1 = 10
-    num_subpop2 = 10
+    num_subpop1 = 100
+    num_subpop2 = 300
     num_subpop3 = 10
 
     print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
@@ -447,7 +447,7 @@ if __name__ == "__main__":
     print(f'Phase delay constants are:\n{alphas}\n')
 
     init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
-    times = kuramotosakaguchi.settimes(0., 10., 200)
+    times = kuramotosakaguchi.settimes(0., 10., 5000)
 
     equations = kuramotosakaguchi.kurasaka_function
     phasesevolution = kuramotosakaguchi.evolvewithnoise(equations)
@@ -465,9 +465,8 @@ if __name__ == "__main__":
     print(f'SubPop 2 frequency: {frequencies[1]}')
     print(f'SubPop 3 frequency: {frequencies[2]}\n')
 
-    kuramotosakaguchi.printcosineordparam(save=False)
-    kuramotosakaguchi.printsyncparam(save=False)
-    kuramotosakaguchi.psdofordparam(save=False)
-    kuramotosakaguchi.showplots()
+    kuramotosakaguchi.printcosineordparam(save=True)
+    kuramotosakaguchi.printsyncparam(save=True)
+    kuramotosakaguchi.psdofordparam(save=True)
     myanim = kuramotosakaguchi.animateoscillators()
-    kuramotosakaguchi.saveanimation(myanim, save_path='C:/Users/feder/Desktop/videosimulazioneprova.mp4')
+    kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videosimulazioneprova.mp4')
