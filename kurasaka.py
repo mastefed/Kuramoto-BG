@@ -295,7 +295,7 @@ class kurasaka_oscillators:
         plt.tick_params(axis='y', direction='in', pad=-22)
         
         if save == True:
-            plt.savefig('/home/f_mastellone/Images/SyncTrial.png')
+            plt.savefig('/home/f_mastellone/Images/SyncParameters.png')
         elif save == False:
             pass
 
@@ -322,83 +322,84 @@ class kurasaka_oscillators:
         plt.tick_params(axis='y', direction='in', pad=-22)
         
         if save == True:
-            plt.savefig('/home/f_mastellone/Images/CosOrdParTrial.png')
+            plt.savefig('/home/f_mastellone/Images/OrderParameterOscillations.png')
         elif save == False:
             pass
 
-    def animate_function(self, i):
-        self.phases = self.kurasaka_evo[i:i+1]
-        self.timestep = self.times[0:i]
-        self.R1 = self.sync_subpop1[0:i]
-        self.R2 = self.sync_subpop2[0:i]
-        self.R3 = self.sync_subpop3[0:i]
-        self.RGlob = self.sync_global[0:i]
-
-        self.imphasedict = {}
-        self.rephasedict = {}
-
-        for k in range(self.N):
-            self.imphasedict[f'im_x{k}'] = numpy.exp(complex(0, self.phases[0][k])).imag
-            self.rephasedict[f're_x{k}'] = numpy.exp(complex(0, self.phases[0][k])).real
-
-        self.imagpart_ordparam_subpop1 = self.orderparameter_subpop1[i].imag
-        self.realpart_ordparam_subpop1 = self.orderparameter_subpop1[i].real
-
-        self.imagpart_ordparam_subpop2 = self.orderparameter_subpop2[i].imag
-        self.realpart_ordparam_subpop2 = self.orderparameter_subpop2[i].real
-
-        self.imagpart_ordparam_subpop3 = self.orderparameter_subpop3[i].imag
-        self.realpart_ordparam_subpop3 = self.orderparameter_subpop3[i].real
-
-        self.imagpart_global_ordparam = self.globalorderparameter[i].imag
-        self.realpart_global_ordparam = self.globalorderparameter[i].real
-
-        ticks = [-0.8, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 0.8]
-
-        self.ax1.clear()
-        self.circ = plt.Circle((0, 0), radius=1, lw=0.3, edgecolor='k', facecolor='None')
-        self.ax1.add_patch(self.circ)
-        self.ax1.set_xlim(-1.2, 1.2)
-        self.ax1.set_ylim(-1.2, 1.2)
-        self.ax1.spines['left'].set_position('center')
-        self.ax1.spines['right'].set_color('none')
-        self.ax1.spines['bottom'].set_position('center')
-        self.ax1.spines['top'].set_color('none')
-        self.ax1.yaxis.set_ticks(ticks)
-        self.ax1.xaxis.set_ticks(ticks)
-        self.ax1.set_xlabel('Re', loc='right')
-        self.ax1.set_ylabel('Im', loc='top')
-
-        self.ax1.arrow(0., 0., self.realpart_ordparam_subpop1, self.imagpart_ordparam_subpop1, head_width=0.02, head_length=0.05, fc='b', ec='b', lw=1., label='Z Pop. 1')
-        self.ax1.arrow(0., 0., self.realpart_ordparam_subpop2, self.imagpart_ordparam_subpop2, head_width=0.02, head_length=0.05, fc='g', ec='g', lw=1., label='Z Pop. 2')
-        self.ax1.arrow(0., 0., self.realpart_ordparam_subpop3, self.imagpart_ordparam_subpop3, head_width=0.02, head_length=0.05, fc='r', ec='r', lw=1., label='Z Pop. 3')
-        self.ax1.arrow(0., 0., self.realpart_global_ordparam, self.imagpart_global_ordparam, head_width=0.02, head_length=0.05, fc='k', ec='k', lw=1.3, label='Z Global')
-        for k in range(self.N1):
-            self.ax1.plot(self.rephasedict[f're_x{k}'], self.imphasedict[f'im_x{k}'], 'bo', ms=7.)
-        for k in range(self.N2):
-            self.ax1.plot(self.rephasedict[f're_x{self.N1 + k}'], self.imphasedict[f'im_x{self.N1 + k}'], 'go', ms=7.)
-        for k in range(self.N3):
-            self.ax1.plot(self.rephasedict[f're_x{self.N1 + self.N2 + k}'], self.imphasedict[f'im_x{self.N1 + self.N2 + k}'], 'ro', ms=7.)
-        self.ax1.legend()
-
-        self.ax2.clear()
-        self.ax2.set_ylim([0.,1.])
-        self.ax2.set_xlim([self.time_start, self.time_end])
-        self.ax2.set_xlabel('Time Steps')
-        self.ax2.set_ylabel('R')
-
-        self.ax2.plot(self.timestep, self.R1, label='Sync. Par. Pop. 1')
-        self.ax2.plot(self.timestep, self.R2, label='Sync. Par. Pop. 2')
-        self.ax2.plot(self.timestep, self.R3, label='Sync. Par. Pop. 3')
-        self.ax2.plot(self.timestep, self.RGlob, 'k', label='Global Sync.')
-        self.ax2.legend()
-
-    def animateoscillators(self):
-        self.fig = plt.figure(f'{self.N} Oscillators Animated', figsize=(13,6))
+    def animateoscillators(self):     
+        def animate_function(i):
+            phases = self.kurasaka_evo[i:i+1]
+            timestep = self.times[0:i]
+            R1 = self.sync_subpop1[0:i]
+            R2 = self.sync_subpop2[0:i]
+            R3 = self.sync_subpop3[0:i]
+            RGlob = self.sync_global[0:i]
+    
+            imphasedict = {}
+            rephasedict = {}
+    
+            for k in range(self.N):
+                imphasedict[f'im_x{k}'] = numpy.exp(complex(0, phases[0][k])).imag
+                rephasedict[f're_x{k}'] = numpy.exp(complex(0, phases[0][k])).real
+    
+            imagpart_ordparam_subpop1 = self.orderparameter_subpop1[i].imag
+            realpart_ordparam_subpop1 = self.orderparameter_subpop1[i].real
+    
+            imagpart_ordparam_subpop2 = self.orderparameter_subpop2[i].imag
+            realpart_ordparam_subpop2 = self.orderparameter_subpop2[i].real
+    
+            imagpart_ordparam_subpop3 = self.orderparameter_subpop3[i].imag
+            realpart_ordparam_subpop3 = self.orderparameter_subpop3[i].real
+    
+            imagpart_global_ordparam = self.globalorderparameter[i].imag
+            realpart_global_ordparam = self.globalorderparameter[i].real
+    
+            ticks = [-0.8, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 0.8]
+    
+            ax1.clear()
+            circ = plt.Circle((0, 0), radius=1, lw=0.3, edgecolor='k', facecolor='None')
+            ax1.add_patch(circ)
+            ax1.set_xlim(-1.2, 1.2)
+            ax1.set_ylim(-1.2, 1.2)
+            ax1.spines['left'].set_position('center')
+            ax1.spines['right'].set_color('none')
+            ax1.spines['bottom'].set_position('center')
+            ax1.spines['top'].set_color('none')
+            ax1.yaxis.set_ticks(ticks)
+            ax1.xaxis.set_ticks(ticks)
+            ax1.set_xlabel('Re', loc='right')
+            ax1.set_ylabel('Im', loc='top')
+    
+            ax1.arrow(0., 0., realpart_ordparam_subpop1, imagpart_ordparam_subpop1, head_width=0.02, head_length=0.05, fc='b', ec='b', lw=1., label='Z Pop. 1')
+            ax1.arrow(0., 0., realpart_ordparam_subpop2, imagpart_ordparam_subpop2, head_width=0.02, head_length=0.05, fc='g', ec='g', lw=1., label='Z Pop. 2')
+            ax1.arrow(0., 0., realpart_ordparam_subpop3, imagpart_ordparam_subpop3, head_width=0.02, head_length=0.05, fc='r', ec='r', lw=1., label='Z Pop. 3')
+            ax1.arrow(0., 0., realpart_global_ordparam, imagpart_global_ordparam, head_width=0.02, head_length=0.05, fc='k', ec='k', lw=1.3, label='Z Global')
+            for k in range(self.N1):
+                ax1.plot(rephasedict[f're_x{k}'], imphasedict[f'im_x{k}'], 'bo', ms=7.)
+            for k in range(self.N2):
+                ax1.plot(rephasedict[f're_x{self.N1 + k}'], imphasedict[f'im_x{self.N1 + k}'], 'go', ms=7.)
+            for k in range(self.N3):
+                ax1.plot(rephasedict[f're_x{self.N1 + self.N2 + k}'], imphasedict[f'im_x{self.N1 + self.N2 + k}'], 'ro', ms=7.)
+            ax1.legend()
+    
+            ax2.clear()
+            ax2.set_ylim([0.,1.])
+            ax2.set_xlim([self.time_start, self.time_end])
+            ax2.set_xlabel('Time Steps')
+            ax2.set_ylabel('R')
+    
+            ax2.plot(timestep, R1, label='Sync. Par. Pop. 1')
+            ax2.plot(timestep, R2, label='Sync. Par. Pop. 2')
+            ax2.plot(timestep, R3, label='Sync. Par. Pop. 3')
+            ax2.plot(timestep, RGlob, 'k', label='Global Sync.')
+            ax2.legend()
+        
+        
+        fig = plt.figure(f'{self.N} Oscillators Animated', figsize=(13,6))
         plt.suptitle(f'{self.N} Oscillators')
-        self.ax1 = plt.subplot(121)
-        self.ax2 = plt.subplot(122)
-        self.animated = animation.FuncAnimation(self.fig, self.animate_function, frames = len(self.kurasaka_evo), interval=0.1)
+        ax1 = plt.subplot(121)
+        ax2 = plt.subplot(122)
+        self.animated = animation.FuncAnimation(fig, animate_function, frames = len(self.kurasaka_evo), interval=0.1)
 
         return self.animated
 
@@ -431,9 +432,9 @@ if __name__ == "__main__":
 
     save_path = args.savepath
 
-    num_subpop1 = 1000
-    num_subpop2 = 3000
-    num_subpop3 = 60
+    num_subpop1 = 10
+    num_subpop2 = 10
+    num_subpop3 = 10
 
     print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
     print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
@@ -446,7 +447,7 @@ if __name__ == "__main__":
     print(f'Phase delay constants are:\n{alphas}\n')
 
     init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
-    times = kuramotosakaguchi.settimes(0., 20., 2000)
+    times = kuramotosakaguchi.settimes(0., 10., 200)
 
     equations = kuramotosakaguchi.kurasaka_function
     phasesevolution = kuramotosakaguchi.evolvewithnoise(equations)
@@ -464,9 +465,9 @@ if __name__ == "__main__":
     print(f'SubPop 2 frequency: {frequencies[1]}')
     print(f'SubPop 3 frequency: {frequencies[2]}\n')
 
-    kuramotosakaguchi.printcosineordparam(save=True)
-    kuramotosakaguchi.printsyncparam(save=True)
-    kuramotosakaguchi.psdofordparam(save=True)
+    kuramotosakaguchi.printcosineordparam(save=False)
+    kuramotosakaguchi.printsyncparam(save=False)
+    kuramotosakaguchi.psdofordparam(save=False)
     kuramotosakaguchi.showplots()
     myanim = kuramotosakaguchi.animateoscillators()
-    kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videosimulazione.mp4')
+    kuramotosakaguchi.saveanimation(myanim, save_path='C:/Users/feder/Desktop/videosimulazioneprova.mp4')
