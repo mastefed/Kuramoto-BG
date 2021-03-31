@@ -1,3 +1,13 @@
+import numpy
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
+from scipy.integrate import odeint
+from scipy.stats import cauchy
+from scipy.signal import find_peaks, welch
+
+from sdeint import itoint
+
 class kurasaka_oscillators:
     def __init__(self, num_subpop1, num_subpop2, num_subpop3):
         self.N1 = num_subpop1
@@ -216,7 +226,7 @@ class kurasaka_oscillators:
 
         return self.real_ordparam_subpop1, self.real_ordparam_subpop2, self.real_ordparam_subpop3
 
-    def psdofordparam(self, save):
+    def psdofordparam(self, save, savepath):
         self.freq1, self.psd1 = welch(self.real_ordparam_subpop1, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq2, self.psd2 = welch(self.real_ordparam_subpop2, fs=1/((self.time_end - self.time_start)/self.time_points))
         self.freq3, self.psd3 = welch(self.real_ordparam_subpop3, fs=1/((self.time_end - self.time_start)/self.time_points))
@@ -233,7 +243,7 @@ class kurasaka_oscillators:
         plt.legend()
 
         if save == True:
-            plt.savefig('/home/f_mastellone/Images/PSD.png')
+            plt.savefig(savepath)
         elif save == False:
             pass
 
@@ -271,7 +281,7 @@ class kurasaka_oscillators:
 
         return self.mean_frequencies
 
-    def printsyncparam(self, save):
+    def printsyncparam(self, save, savepath):
         plt.figure(f'{self.N} Oscillators Sync', figsize=(13,6))
         plt.title(f'{self.N} Oscillators Sync')
         plt.plot(self.times, self.sync_subpop1, label='SubPop 1')
@@ -296,11 +306,11 @@ class kurasaka_oscillators:
         plt.tick_params(axis='y', direction='in', pad=-22)
         
         if save == True:
-            plt.savefig('/home/f_mastellone/Images/SyncParameters.png')
+            plt.savefig(savepath)
         elif save == False:
             pass
 
-    def printcosineordparam(self, save):
+    def printcosineordparam(self, save, savepath):
         plt.figure("Subpops' Phase Evolution", figsize=(13,6))
         plt.title("Subpops' Phase Evolution")
         plt.plot(self.times, self.real_ordparam_subpop1, label='SubPop 1')
@@ -316,14 +326,14 @@ class kurasaka_oscillators:
         plt.plot(self.times, self.real_ordparam_subpop3, label='SubPop 3')
         plt.xlim([5.,5.2])
         plt.ylim([-1.3,1.1])
-        plt.xticks([5.025, 5.050, 5.075, 5.100, 5.125, 5.150, 5.175])
+        plt.xticks([5.050, 5.100, 5.150])
         plt.yticks([])
         plt.grid()
         plt.tick_params(axis='x', direction='in', pad=-15)
         plt.tick_params(axis='y', direction='in', pad=-22)
         
         if save == True:
-            plt.savefig('/home/f_mastellone/Images/OrderParameterOscillations.png')
+            plt.savefig(savepath)
         elif save == False:
             pass
 
@@ -413,61 +423,3 @@ class kurasaka_oscillators:
 
     def showplots(self):
         plt.show()
-
-
-import numpy
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import argparse
-
-from scipy.integrate import odeint
-from scipy.stats import cauchy
-from scipy.signal import find_peaks, welch
-
-from sdeint import itoint
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Tool to simulate an arbitrary number of Kuramoto-Sakaguchi Oscillators.")
-    parser.add_argument('--savepath', help='Where would you save the animated evolution?', type=str)
-    args = parser.parse_args()
-
-    save_path = args.savepath
-
-    num_subpop1 = 100
-    num_subpop2 = 300
-    num_subpop3 = 10
-
-    print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
-    print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
-    print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
-
-    kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-    coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True)
-
-    print(f'Coupling constants are:\n{coupconsts}\n')
-    print(f'Phase delay constants are:\n{alphas}\n')
-
-    init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
-    times = kuramotosakaguchi.settimes(0., 10., 5000)
-
-    equations = kuramotosakaguchi.kurasaka_function
-    phasesevolution = kuramotosakaguchi.evolvewithnoise(equations)
-    syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
-    globsync, globordparam = kuramotosakaguchi.findglobalorderparameter()
-
-    print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
-    print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
-    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}')
-    print(f'Global Sync: {numpy.mean(globsync[300:])}\n')
-
-    kuramotosakaguchi.ordparam_phase()
-    frequencies = kuramotosakaguchi.findperiod()
-    print(f'SubPop 1 frequency: {frequencies[0]}')
-    print(f'SubPop 2 frequency: {frequencies[1]}')
-    print(f'SubPop 3 frequency: {frequencies[2]}\n')
-
-    kuramotosakaguchi.printcosineordparam(save=True)
-    kuramotosakaguchi.printsyncparam(save=True)
-    kuramotosakaguchi.psdofordparam(save=True)
-    #myanim = kuramotosakaguchi.animateoscillators()
-    #kuramotosakaguchi.saveanimation(myanim, save_path='/home/f_mastellone/Images/videosimulazioneprova.mp4')
