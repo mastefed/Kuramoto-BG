@@ -2,7 +2,7 @@ import numpy
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-from scipy.integrate import odeint
+from scipy.integrate import odeint, simps
 from scipy.stats import cauchy
 from scipy.signal import find_peaks, welch
 
@@ -15,6 +15,7 @@ class kurasaka_oscillators:
         self.N3 = num_subpop3
         self.N = self.N1 + self.N2 + self.N3
         self.Narray = [self.N1, self.N2, self.N3]
+        
         self.reproducible_rng = numpy.random.default_rng(42)
         self.notreproducible_rng = numpy.random.default_rng()
 
@@ -71,9 +72,9 @@ class kurasaka_oscillators:
             self.k22 = 0.5 
             self.k33 = 0.2
 
-            self.k12 = 1.
-            self.k13 = 1.
-            self.k23 = 1.
+            self.k12 = 5.
+            self.k13 = 5.
+            self.k23 = 5.
             self.k21 = self.k12
             self.k31 = self.k13
             self.k32 = self.k23
@@ -101,15 +102,31 @@ class kurasaka_oscillators:
             [self.alpha31, self.alpha32, self.alpha33]
         ])
 
-        self.omega1 = cauchy.rvs(loc=143., scale=.2, size=self.N1)
-        self.omega2 = cauchy.rvs(loc=71., scale=.2, size=self.N2)
-        self.omega3 = cauchy.rvs(loc=95., scale=.2, size=self.N3)
+        self.omega1 = cauchy.rvs(loc=143., scale=.2, size=self.N1) # 143
+        self.omega2 = cauchy.rvs(loc=71., scale=.2, size=self.N2) # 71
+        self.omega3 = cauchy.rvs(loc=95., scale=.2, size=self.N3) # 95
 
         self.omegamatrix = numpy.hstack((numpy.hstack((self.omega1, self.omega2)), self.omega3))
 
         return self.kmatrix, self.omegamatrix, self.alphamatrix
 
     def kurasaka_function(self, x, t):
+        """
+        Setup the Differential Equations to be used in Scipy.odeint later.
+
+        Parameters
+        ----------
+        x : float
+            The array of initial values for the Initial Value Problem.
+        t : float
+            Dummy variable needed to use Scipy.odeint.
+
+        Returns
+        -------
+        Numpy Array
+            Returns the array of Differential Equations.
+
+        """
         self.variables = {}
         for i in range(self.N1):
             self.variables[f'theta1{i}'] = x[i] # gets an array of phases' value at time t_k, odeint update the values everytime for evert t_j
@@ -120,8 +137,8 @@ class kurasaka_oscillators:
         for i in range(self.N3):
             self.variables[f'theta3{i}'] = x[self.N1 + self.N2 + i]
 
-        def interaction(k, z):
-            interaction_terms = 0.
+        def interaction(k, z): # creates the interaction terms of the Kuramoto model, these are proportional
+            interaction_terms = 0. # to the sine of the difference between the phases
             for j in range(self.Narray[k-1]):
                 interaction_terms += self.kmatrix[z-1,k-1]/self.Narray[k-1]*numpy.sin(self.variables[f'theta{k}{j}'] - self.variables[f'theta{z}{i}'] - self.alphamatrix[z-1,k-1])
             return interaction_terms
@@ -146,10 +163,39 @@ class kurasaka_oscillators:
         return numpy.array(self.dthetadt) # returns the function to be put in .evolve()
 
     def evolve(self, function):
+        """
+        This function solves the Differential equations using Odeint by Scipy.
+
+        Parameters
+        ----------
+        function : Numpy Array
+            The array of Differential Equations to be solved.
+
+        Returns
+        -------
+        Numpy Array
+            Returns a Numpy Array containing the points evaluated at every t_j by Scipy.odeint.
+
+        """
         self.kurasaka_evo = odeint(function, self.initialvalues, self.times)
         return self.kurasaka_evo
     
     def evolvewithnoise(self, function):
+        """
+        This is analogous to the evolve() function but it adds some noise to the
+        differential equations.
+
+        Parameters
+        ----------
+        function : Numpy Array
+            The array of Differential Equations to be solved.
+
+        Returns
+        -------
+        Numpy Array
+            Returns a Numpy Array containing the points evaluated at every t_j by Scipy.odeint.
+
+        """
         def noise(x, t):
             self.sigma = []
             for i in range(self.N):
