@@ -45,7 +45,7 @@ if __name__ == "__main__":
     print(f'SubPop 3 frequency: {frequencies[2]} Calcolata con Re(Z)')
     
     t1 = time.time()
-    print(f'Tempo di esecuzione del codice: {(t1-t0)/60}')
+    print(f'\nTempo di esecuzione del codice: {(t1-t0)/60}')
 
     #kuramotosakaguchi.printcosineordparam(save=False, savepath='/home/f_mastellone/Images/OrderParameterOscillations.png')
     #kuramotosakaguchi.printsyncparam(save=False, savepath='/home/f_mastellone/Images/SyncParameters.png')
