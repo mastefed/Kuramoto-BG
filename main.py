@@ -14,13 +14,14 @@ if __name__ == "__main__":
     num_subpop1 = 100
     num_subpop2 = 300
     num_subpop3 = 50
+    couplingconstants = [5., 5., 5.]
 
     print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
     print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
     print(f'Pop. 3 number of phase oscillators: {num_subpop3}\n')
 
     kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
-    coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(fixed=True)
+    coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(couplingconstants)
 
     print(f'Coupling constants are:\n{coupconsts}\n')
     print(f'Phase delay constants are:\n{alphas}\n')
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     print(f'SubPop 3 frequency: {frequencies[2]} Calcolata con Re(Z)')
     
     t1 = time.time()
-    print(f'\nTempo di esecuzione del codice: {(t1-t0)/60}')
+    print(f'\nTempo di esecuzione del codice: {(t1-t0)/60} minuti!')
 
     #kuramotosakaguchi.printcosineordparam(save=False, savepath='/home/f_mastellone/Images/OrderParameterOscillations.png')
     #kuramotosakaguchi.printsyncparam(save=False, savepath='/home/f_mastellone/Images/SyncParameters.png')
