@@ -32,6 +32,8 @@ if __name__ == "__main__":
     dictionary_of_results = {}
 
     for i, list_of_values in enumerate(values_to_choose):
+        t3 = time.time()
+
         coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(list_of_values)
         print(f'Coupling constants are:\n{list_of_values}\n')
 
@@ -61,7 +63,8 @@ if __name__ == "__main__":
         dictionary_of_results[f'Iteration {i+1} --> Sync Pop1, Sync Pop2, Sync Pop3, Global Sync'] = list_of_sync
         dictionary_of_results[f'Iteration {i+1} --> Freq Pop1, Freq Pop2, Freq Pop3'] = list_of_freq
 
-        print(f'Iteration {i+1} finished.\n')
+        t4 = time.time()
+        print(f'Iteration {i+1} finished in {(t4-t3)/60} minutes.\n')
 
     t1 = time.time()
     print(f'Code execution time: {(t1-t0)/60} minutes!')
