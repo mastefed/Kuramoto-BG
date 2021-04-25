@@ -39,7 +39,7 @@ class kurasaka_oscillators:
 
         return self.initialvalues
 
-    def setmodelconstants(self, list_of_values, fixed=True, list_of_values):
+    def setmodelconstants(self, list_of_values, fixed=True):
         if fixed == False:
             print("Please, choose the intra-subpopulations' coupling constants:")
             self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))

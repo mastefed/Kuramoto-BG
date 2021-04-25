@@ -10,7 +10,8 @@ from os import path
 if __name__ == "__main__":
     t0 = time.time()
 
-    values_to_iterate = np.linspace(10.,30.,5)
+    #values_to_iterate = np.linspace(10.,30.,5)
+    values_to_iterate = np.linspace(1.,2.,1)
     val_K12 = 5.
 
     iterator = it.product(values_to_iterate, repeat=2)
