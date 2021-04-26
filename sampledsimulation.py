@@ -10,7 +10,7 @@ from os import path
 if __name__ == "__main__":
     t0 = time.time()
 
-    values_to_iterate = np.linspace(10.,30.,5)
+    values_to_iterate = np.linspace(10., 30., 10)
     val_K12 = 5.
 
     iterator = it.product(values_to_iterate, repeat=2)
@@ -19,9 +19,9 @@ if __name__ == "__main__":
 
     # In questo modo values_to_choose[i] è una lista di K da testare!
 
-    num_subpop1 = 100
-    num_subpop2 = 300
-    num_subpop3 = 50
+    num_subpop1 = 40
+    num_subpop2 = 120
+    num_subpop3 = 20
 
     print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
     print(f'Pop. 2 number of phase oscillators: {num_subpop2}')
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     if path.exists('/home/f_mastellone/CsvFiles'):
         (pd.DataFrame.from_dict(data=dictionary_of_results, orient='index').to_csv('/home/f_mastellone/CsvFiles/data.csv', header=False))
     else:
-        (pd.DataFrame.from_dict(data=dictionary_of_results, orient='index').to_csv('/Users/federicom/Desktop/25iterations.csv', header=False))
+        (pd.DataFrame.from_dict(data=dictionary_of_results, orient='index').to_csv('/Users/federicom/Desktop/data.csv', header=False))
 
 
 
