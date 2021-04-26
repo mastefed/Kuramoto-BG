@@ -41,7 +41,7 @@ if __name__ == "__main__":
         times = kuramotosakaguchi.settimes(0., 10., 1000)
 
         equations = kuramotosakaguchi.kurasaka_function
-        phasesevolution = kuramotosakaguchi.evolve(equations)
+        phasesevolution = kuramotosakaguchi.evolvewithnoise(equations)
         syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
         globsync, globordparam = kuramotosakaguchi.findglobalorderparameter()
 
