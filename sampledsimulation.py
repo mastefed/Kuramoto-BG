@@ -29,13 +29,19 @@ if __name__ == "__main__":
 
     kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
 
-    dictionary_of_results = {}
+    list_of_variables = [
+    'Val K12', 'Val K13', 'Val K23', 'Sync Pop1', 'Sync Pop2', 'Sync Pop3', 'Global Sync', 'Freq Pop1', 'Freq Pop2', 'Freq Pop3'
+    ]
+    
+    dictionary_of_results = {
+    'Iterations' : list_of_variables
+    }
 
-    for i, list_of_values in enumerate(values_to_choose):
+    for i, values in enumerate(values_to_choose):
         t3 = time.time()
 
-        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(list_of_values)
-        print(f'Coupling constants are:\n{list_of_values}\n')
+        coupconsts, omegas, alphas = kuramotosakaguchi.setmodelconstants(values)
+        print(f'Coupling constants are:\n{values}\n')
 
         init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
         times = kuramotosakaguchi.settimes(0., 10., 1000)
@@ -56,12 +62,10 @@ if __name__ == "__main__":
         print(f'SubPop 2 frequency: {frequencies[1]} Calcolata con Re(Z)')
         print(f'SubPop 3 frequency: {frequencies[2]} Calcolata con Re(Z)')
 
-        list_of_sync = [numpy.mean(syncs[0][300:]), numpy.mean(syncs[1][300:]), numpy.mean(syncs[2][300:])]
-        list_of_freq = [frequencies[0], frequencies[1], frequencies[2]]
+        syncs = [numpy.mean(syncs[0][300:]), numpy.mean(syncs[1][300:]), numpy.mean(syncs[2][300:]), numpy.mean(globsync[300:])]
+        freqs = [frequencies[0], frequencies[1], frequencies[2]]
 
-        dictionary_of_results[f'Iteration {i+1} --> Val K12, Val K13, Val K23'] = list_of_values
-        dictionary_of_results[f'Iteration {i+1} --> Sync Pop1, Sync Pop2, Sync Pop3, Global Sync'] = list_of_sync
-        dictionary_of_results[f'Iteration {i+1} --> Freq Pop1, Freq Pop2, Freq Pop3'] = list_of_freq
+        dictionary_of_results[f'Iteration {i+1}'] = values[0], values[1], values[2], syncs[0], syncs[1], syncs[2], syncs[3], freqs[0], freqs[1], freqs[2]
 
         t4 = time.time()
         print(f'Iteration {i+1} finished in {(t4-t3)/60} minutes.\n')
