@@ -11,11 +11,11 @@ if __name__ == "__main__":
     t0 = time.time()
 
     values_to_iterate = np.linspace(10., 30., 10)
-    val_K12 = 5.
+    val_K13 = 5.
 
     iterator = it.product(values_to_iterate, repeat=2)
 
-    values_to_choose = [[val_K12, val[0], val[1]] for val in iterator]
+    values_to_choose = [[val[0], val_K13, val[1]] for val in iterator]
 
     # In questo modo values_to_choose[i] è una lista di K da testare!
 
