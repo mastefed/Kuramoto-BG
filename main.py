@@ -11,9 +11,9 @@ import time
 if __name__ == "__main__":
     t0 = time.time()
     
-    num_subpop1 = 100
-    num_subpop2 = 300
-    num_subpop3 = 50
+    num_subpop1 = 10
+    num_subpop2 = 30
+    num_subpop3 = 5
     N1 = num_subpop1 + num_subpop2 + num_subpop3
     couplingconstants = [25., 25., 25.]
 
@@ -27,6 +27,7 @@ if __name__ == "__main__":
     print(f'Coupling constants are:\n{coupconsts}\n')
 
     init_random = kuramotosakaguchi1.setinitialconditions(clustered=False)
+    print(init_random)
     times1 = kuramotosakaguchi1.settimes(0., 10., 1000)
 
     equations = kuramotosakaguchi1.kurasaka_function
@@ -50,9 +51,9 @@ if __name__ == "__main__":
 
     t2 = time.time()
     
-    num_subpop1 = 40
-    num_subpop2 = 120
-    num_subpop3 = 20
+    num_subpop1 = 4
+    num_subpop2 = 12
+    num_subpop3 = 2
     N2 = num_subpop1 + num_subpop2 + num_subpop3
 
     print(f'Pop. 1 number of phase oscillators: {num_subpop1}')
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     times2 = kuramotosakaguchi2.settimes(0., 10., 1000)
 
     equations = kuramotosakaguchi2.kurasaka_function
-    phasesevolution = kuramotosakaguchi2.evolve(equations)
+    phasesevolution = kuramotosakaguchi2.evolvewithnoise(equations)
     syncs2, ordparams2 = kuramotosakaguchi2.findorderparameter(phasesevolution)
     globsync2, globordparam2 = kuramotosakaguchi2.findglobalorderparameter()
 
@@ -104,6 +105,4 @@ if __name__ == "__main__":
     plt.yticks(numpy.arange(0, 1.1, step=0.1))
     plt.legend(loc='lower left')
 
-    plt.savefig('/home/f_mastellone/Images/confronto.png')
-    #plt.savefig('/Users/federicom/Desktop/confronto.png')
-
+    plt.show()

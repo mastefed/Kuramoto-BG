@@ -10,6 +10,13 @@ from sdeint import itoint
 
 class kurasaka_oscillators:
     def __init__(self, num_subpop1, num_subpop2, num_subpop3):
+        """ Init Function for the class
+
+        Args:
+            num_subpop1 (int): the number of oscillators in the first population
+            num_subpop2 (int): the number of oscillators in the second population
+            num_subpop3 (int): the number of oscillators in the third population
+        """
         self.N1 = num_subpop1
         self.N2 = num_subpop2
         self.N3 = num_subpop3
@@ -20,26 +27,60 @@ class kurasaka_oscillators:
         self.notreproducible_rng = numpy.random.default_rng()
 
     def settimes(self, time_start, time_end, time_points):
+        """ Generates the array of time points to integrate
+            the set of differential equations
+
+        Args:
+            time_start (float): the starting time value
+            time_end (float): the stop time value
+            time_points (int): how many time points do you want?
+
+        Returns:
+            Numpy Array: The array of time points
+        """
         self.time_start = time_start
         self.time_end = time_end
         self.time_points = time_points
         self.times = numpy.linspace(self.time_start, self.time_end, self.time_points)
         return self.times
 
-    def setinitialconditions(self, clustered):
+    def setinitialconditions(self, clustered=False):
+        """Set the initial phase value for every oscillator.
+
+        Args:
+            clustered (bool, optional): Set to True if you want to start the simulation with clustered phases. Defaults to False.
+
+        Returns:
+            Numpy Array: The array containing the initial values for every phase of every oscillator.
+        """
         if clustered == False:
             self.initialvalues = 2*numpy.pi*self.reproducible_rng.random(self.N) # random conditions of phases between 0 and 2pi
 
         elif clustered == True:
-            self.init_values_N1 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N1)
-            self.init_values_N2 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N2)
-            self.init_values_N3 = self.reproducible_rng.normal(loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N3)
+            self.init_values_N1 = self.reproducible_rng.normal(
+                loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N1
+                )
+            self.init_values_N2 = self.reproducible_rng.normal(
+                loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N2
+                )
+            self.init_values_N3 = self.reproducible_rng.normal(
+                loc=2*numpy.pi*self.reproducible_rng.random(), scale=.5, size=self.N3
+                )
 
             self.initialvalues = numpy.hstack((numpy.hstack((self.init_values_N1, self.init_values_N2)), self.init_values_N3))
 
         return self.initialvalues
 
     def setmodelconstants(self, list_of_values, fixed=True):
+        """Set the model's coupling constants, phase delay values and natural frequencies values
+
+        Args:
+            list_of_values (list): List of values for K12, K13, K23 constants. Note that K12=K21, K13=K31, K23=K32.
+            fixed (bool, optional): If False one will be asked to decide each value for the coupling constants. Defaults to True.
+
+        Returns:
+            List of 2D arrays: Returns the Matrices containing K, alpha and omega values.
+        """
         if fixed == False:
             print("Please, choose the intra-subpopulations' coupling constants:")
             self.k11 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 1 interaction: '))
@@ -50,9 +91,9 @@ class kurasaka_oscillators:
             self.k12 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 2 interaction: '))
             self.k13 = float(input('Choose the coupling constant for subpopulation 1 <--> subpopulation 3 interaction: '))
             self.k23 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 3 interaction: '))
-            self.k21 = self.k12
-            self.k31 = self.k13
-            self.k32 = self.k23
+            self.k21 = float(input('Choose the coupling constant for subpopulation 2 <--> subpopulation 1 interaction: '))
+            self.k31 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 1 interaction: '))
+            self.k32 = float(input('Choose the coupling constant for subpopulation 3 <--> subpopulation 2 interaction: '))
 
             print("\nThen, choose the intra-subpopulations' phase delay alpha:")
             self.alpha11 = float(input('Choose alpha for subpopulation 1 <--> subpopulation 1 interaction: '))
@@ -128,8 +169,9 @@ class kurasaka_oscillators:
 
         """
         self.variables = {}
+        # gets an array of phases' value at time t_k, odeint update the values everytime for every t_j
         for i in range(self.N1):
-            self.variables[f'theta1{i}'] = x[i] # gets an array of phases' value at time t_k, odeint update the values everytime for evert t_j
+            self.variables[f'theta1{i}'] = x[i] 
 
         for i in range(self.N2):
             self.variables[f'theta2{i}'] = x[self.N1 + i]
@@ -137,13 +179,18 @@ class kurasaka_oscillators:
         for i in range(self.N3):
             self.variables[f'theta3{i}'] = x[self.N1 + self.N2 + i]
 
-        def interaction(k, z): # creates the interaction terms of the Kuramoto model, these are proportional
-            interaction_terms = 0. # to the sine of the difference between the phases
+        def interaction(k, z):
+            """ Creates the interaction terms of the Kuramoto model, these are 
+                proportional to the sine of the difference between the phases
+            """
+            interaction_terms = 0.
             for j in range(self.Narray[k-1]):
-                interaction_terms += self.kmatrix[z-1,k-1]/self.Narray[k-1]*numpy.sin(self.variables[f'theta{k}{j}'] - self.variables[f'theta{z}{i}'] - self.alphamatrix[z-1,k-1])
+                sine_term = numpy.sin(self.variables[f'theta{k}{j}'] - self.variables[f'theta{z}{i}'] - self.alphamatrix[z-1,k-1])
+                interaction_terms += self.kmatrix[z-1,k-1]/self.Narray[k-1] * sine_term
             return interaction_terms
 
-        self.dthetadt = [] # Creates and updates the values' array with the desired differential equations
+        # Creates and updates the values' array with the desired differential equations
+        self.dthetadt = [] 
 
         for i in range(self.N1):
             self.dthetadt.append(
@@ -212,20 +259,32 @@ class kurasaka_oscillators:
         self.orderparameter_subpop3 = []
 
         for i in range(len(self.times)):
-            self.orderparameter_subpop1.append(1/self.N1 * sum(numpy.exp(complex(0,phases[i][j]))  for j in range(self.N1)))
-            self.orderparameter_subpop2.append(1/self.N2 * sum(numpy.exp(complex(0,phases[i][self.N1 + j]))  for j in range(self.N2)))
-            self.orderparameter_subpop3.append(1/self.N3 * sum(numpy.exp(complex(0,phases[i][self.N1 + self.N2 + j]))  for j in range(self.N3)))
+            self.orderparameter_subpop1.append(
+                1/self.N1 * sum(numpy.exp(complex(0,phases[i][j]))  for j in range(self.N1))
+                )
+            self.orderparameter_subpop2.append(
+                1/self.N2 * sum(numpy.exp(complex(0,phases[i][self.N1 + j]))  for j in range(self.N2))
+                )
+            self.orderparameter_subpop3.append(
+                1/self.N3 * sum(numpy.exp(complex(0,phases[i][self.N1 + self.N2 + j]))  for j in range(self.N3))
+                )
 
         self.sync_subpop1 = []
         self.sync_subpop2 = []
         self.sync_subpop3 = []
 
         for i in range(len(self.orderparameter_subpop1)):
-            self.sync_subpop1.append( numpy.sqrt(self.orderparameter_subpop1[i].real**2 + self.orderparameter_subpop1[i].imag**2) )
+            self.sync_subpop1.append(
+                numpy.sqrt(self.orderparameter_subpop1[i].real**2 + self.orderparameter_subpop1[i].imag**2)
+                )
         for i in range(len(self.orderparameter_subpop2)):
-            self.sync_subpop2.append( numpy.sqrt(self.orderparameter_subpop2[i].real**2 + self.orderparameter_subpop2[i].imag**2) )
+            self.sync_subpop2.append(
+                numpy.sqrt(self.orderparameter_subpop2[i].real**2 + self.orderparameter_subpop2[i].imag**2)
+                )
         for i in range(len(self.orderparameter_subpop3)):
-            self.sync_subpop3.append( numpy.sqrt(self.orderparameter_subpop3[i].real**2 + self.orderparameter_subpop3[i].imag**2) )
+            self.sync_subpop3.append(
+                numpy.sqrt(self.orderparameter_subpop3[i].real**2 + self.orderparameter_subpop3[i].imag**2)
+                )
 
         self.syncs = [self.sync_subpop1, self.sync_subpop2, self.sync_subpop3]
         self.orderparameters = [self.orderparameter_subpop1, self.orderparameter_subpop2, self.orderparameter_subpop3]
@@ -273,9 +332,12 @@ class kurasaka_oscillators:
         return self.real_ordparam_subpop1, self.real_ordparam_subpop2, self.real_ordparam_subpop3
 
     def psdofordparam(self, save, savepath):
-        self.freq1, self.psd1 = welch(self.real_ordparam_subpop1, fs=1/((self.time_end - self.time_start)/self.time_points))
-        self.freq2, self.psd2 = welch(self.real_ordparam_subpop2, fs=1/((self.time_end - self.time_start)/self.time_points))
-        self.freq3, self.psd3 = welch(self.real_ordparam_subpop3, fs=1/((self.time_end - self.time_start)/self.time_points))
+        self.freq1, self.psd1 = welch(self.real_ordparam_subpop1, 
+                                      fs=1/((self.time_end - self.time_start)/self.time_points))
+        self.freq2, self.psd2 = welch(self.real_ordparam_subpop2, 
+                                      fs=1/((self.time_end - self.time_start)/self.time_points))
+        self.freq3, self.psd3 = welch(self.real_ordparam_subpop3, 
+                                      fs=1/((self.time_end - self.time_start)/self.time_points))
 
         plt.figure('PSD', figsize=(6,6))
         plt.title('PSD of Re[Z]')
@@ -323,7 +385,9 @@ class kurasaka_oscillators:
             )
         self.mean_frequency_subpop3 = numpy.mean(self.periods_subpop3)
 
-        self.mean_frequencies = [self.mean_frequency_subpop1, self.mean_frequency_subpop2, self.mean_frequency_subpop3]
+        self.mean_frequencies = [self.mean_frequency_subpop1, 
+                                 self.mean_frequency_subpop2, 
+                                 self.mean_frequency_subpop3]
 
         return self.mean_frequencies
 
@@ -427,10 +491,18 @@ class kurasaka_oscillators:
             ax1.set_xlabel('Re', loc='right')
             ax1.set_ylabel('Im', loc='top')
     
-            ax1.arrow(0., 0., realpart_ordparam_subpop1, imagpart_ordparam_subpop1, head_width=0.02, head_length=0.05, fc='b', ec='b', lw=1., label='Z Pop. 1')
-            ax1.arrow(0., 0., realpart_ordparam_subpop2, imagpart_ordparam_subpop2, head_width=0.02, head_length=0.05, fc='g', ec='g', lw=1., label='Z Pop. 2')
-            ax1.arrow(0., 0., realpart_ordparam_subpop3, imagpart_ordparam_subpop3, head_width=0.02, head_length=0.05, fc='r', ec='r', lw=1., label='Z Pop. 3')
-            ax1.arrow(0., 0., realpart_global_ordparam, imagpart_global_ordparam, head_width=0.02, head_length=0.05, fc='k', ec='k', lw=1.3, label='Z Global')
+            ax1.arrow(0., 0., realpart_ordparam_subpop1, imagpart_ordparam_subpop1, 
+                      head_width=0.02, head_length=0.05, fc='b', ec='b', lw=1., label='Z Pop. 1')
+            
+            ax1.arrow(0., 0., realpart_ordparam_subpop2, imagpart_ordparam_subpop2, 
+                      head_width=0.02, head_length=0.05, fc='g', ec='g', lw=1., label='Z Pop. 2')
+            
+            ax1.arrow(0., 0., realpart_ordparam_subpop3, imagpart_ordparam_subpop3, 
+                      head_width=0.02, head_length=0.05, fc='r', ec='r', lw=1., label='Z Pop. 3')
+            
+            ax1.arrow(0., 0., realpart_global_ordparam, imagpart_global_ordparam, 
+                      head_width=0.02, head_length=0.05, fc='k', ec='k', lw=1.3, label='Z Global')
+            
             for k in range(self.N1):
                 ax1.plot(rephasedict[f're_x{k}'], imphasedict[f'im_x{k}'], 'bo', ms=7.)
             for k in range(self.N2):
