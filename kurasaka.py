@@ -116,9 +116,10 @@ class kurasaka_oscillators:
             self.k12 = list_of_values[0]
             self.k13 = list_of_values[1]
             self.k23 = list_of_values[2]
-            self.k21 = self.k12
-            self.k31 = self.k13
-            self.k32 = self.k23
+            
+            self.k21 = list_of_values[3]
+            self.k31 = list_of_values[4]
+            self.k32 = list_of_values[5]
 
             self.alpha11 = 0. 
             self.alpha22 = 0. 

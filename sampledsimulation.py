@@ -11,11 +11,12 @@ if __name__ == "__main__":
     t0 = time.time()
 
     values_to_iterate = np.linspace(10., 30., 10)
-    val_K23 = 5.
+    fixedval = 5.
 
     iterator = it.product(values_to_iterate, repeat=2)
 
-    values_to_choose = [[val[0], val[1], val_K23] for val in iterator]
+    # list = [K12, K13, K23, K21, K31, K32]
+    values_to_choose = [[val[0], fixedval, fixedval, val[1], fixedval, fixedval] for val in iterator]
 
     # In questo modo values_to_choose[i] è una lista di K da testare!
 
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
 
     list_of_variables = [
-    'Val K12', 'Val K13', 'Val K23', 'Sync Pop1', 'Sync Pop2', 'Sync Pop3', 'Global Sync', 'Freq Pop1', 'Freq Pop2', 'Freq Pop3'
+    'Val K12', 'Val K13', 'Val K23', 'Val K21', 'Val K31', 'Val K32', 'Sync Pop1', 'Sync Pop2', 'Sync Pop3', 'Global Sync', 'Freq Pop1', 'Freq Pop2', 'Freq Pop3'
     ]
     
     dictionary_of_results = {
@@ -65,7 +66,7 @@ if __name__ == "__main__":
         syncs = [numpy.mean(syncs[0][300:]), numpy.mean(syncs[1][300:]), numpy.mean(syncs[2][300:]), numpy.mean(globsync[300:])]
         freqs = [frequencies[0], frequencies[1], frequencies[2]]
 
-        dictionary_of_results[f'Iteration {i+1}'] = values[0], values[1], values[2], syncs[0], syncs[1], syncs[2], syncs[3], freqs[0], freqs[1], freqs[2]
+        dictionary_of_results[f'Iteration {i+1}'] = values[0], values[1], values[2], values[3], values[4], values[5], syncs[0], syncs[1], syncs[2], syncs[3], freqs[0], freqs[1], freqs[2]
 
         t4 = time.time()
         print(f'Iteration {i+1} finished in {(t4-t3)/60} minutes.\n')
