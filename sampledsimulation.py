@@ -16,7 +16,7 @@ if __name__ == "__main__":
     iterator = it.product(values_to_iterate, repeat=2)
 
     # list = [K12, K13, K23, K21, K31, K32]
-    values_to_choose = [[val[0], fixedval, fixedval, val[1], fixedval, fixedval] for val in iterator]
+    values_to_choose = [[fixedval, fixedval, val[0], fixedval, fixedval, val[1]] for val in iterator]
 
     # In questo modo values_to_choose[i] è una lista di K da testare!
 
