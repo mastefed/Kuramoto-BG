@@ -10,13 +10,13 @@ from os import path
 if __name__ == "__main__":
     t0 = time.time()
 
-    values_to_iterate = np.linspace(10., 30., 10)
+    values_to_iterate = np.linspace(30., 90., 10)
     fixedval = 5.
 
     iterator = it.product(values_to_iterate, repeat=2)
 
     # list = [K12, K13, K23, K21, K31, K32]
-    values_to_choose = [[fixedval, val[0], fixedval, fixedval, val[1], fixedval] for val in iterator]
+    values_to_choose = [[val[0], fixedval, fixedval, val[1], fixedval, fixedval] for val in iterator]
 
     # In questo modo values_to_choose[i] è una lista di K da testare!
 
@@ -47,24 +47,48 @@ if __name__ == "__main__":
         init_random = kuramotosakaguchi.setinitialconditions(clustered=False)
         times = kuramotosakaguchi.settimes(0., 10., 1000)
 
-        equations = kuramotosakaguchi.kurasaka_function
-        phasesevolution = kuramotosakaguchi.evolvewithnoise(equations)
+        phasesevolution = kuramotosakaguchi.evolve(noisy=True)
+        
         syncs, ordparams = kuramotosakaguchi.findorderparameter(phasesevolution)
+        
+        time_points_1 = numpy.argwhere(numpy.array(syncs[0]) > 0.8)
+        if time_points_1.size() == 0:
+            minimum_time_pop1 = 0
+            print('Pop. 1 never reaches |Z|>0.8')
+        else:
+            minimum_time_pop1 = time_points_1.min()
+            print(f'Population 1 reaches |Z|>0.80 in {minimum_time_pop1} integration points')
+            
+        time_points_2 = numpy.argwhere(numpy.array(syncs[1]) > 0.8)
+        if time_points_2.size() == 0:
+            minimum_time_pop2 = 0
+            print('Pop. 2 never reaches |Z|>0.8')
+        else:
+            minimum_time_pop2 = time_points_2.min()
+            print(f'Population 2 reaches |Z|>0.80 in {minimum_time_pop2} integration points')
+            
+        time_points_3 = numpy.argwhere(numpy.array(syncs[2]) > 0.8)
+        if time_points_3.size() == 0:
+            minimum_time_pop3 = 0
+            print('Pop. 3 never reaches |Z|>0.8\n')
+        else:
+            minimum_time_pop3 = time_points_3.min()
+            print(f'Population 1 reaches |Z|>0.80 in {minimum_time_pop3} integration points\n')
+        
         globsync, globordparam = kuramotosakaguchi.findglobalorderparameter()
 
-        print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
-        print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
-        print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}')
-        print(f'Global Sync: {numpy.mean(globsync[300:])}\n')
+        print(f'Mean Sync for SuPop 1: {numpy.mean(syncs[0][minimum_time_pop1:])}')
+        print(f'Mean Sync for SuPop 2: {numpy.mean(syncs[1][minimum_time_pop2:])}')
+        print(f'Mean Sync for SuPop 3: {numpy.mean(syncs[2][minimum_time_pop3:])}')
+        print(f'Mean Global Sync: {numpy.mean(globsync[300:])}\n')
 
-        kuramotosakaguchi.ordparam_phase()
-        frequencies = kuramotosakaguchi.findperiod()
-        print(f'SubPop 1 frequency: {frequencies[0]} Calcolata con Re(Z)')
-        print(f'SubPop 2 frequency: {frequencies[1]} Calcolata con Re(Z)')
-        print(f'SubPop 3 frequency: {frequencies[2]} Calcolata con Re(Z)')
+        frequencies_array, mean_frequencies = kuramotosakaguchi.findperiod_phases(phasesevolution)
+        print(f'SubPop 1 mean frequency: {numpy.mean(mean_frequencies[:,0][minimum_time_pop1:])} Calculated with phases')
+        print(f'SubPop 2 mean frequency: {numpy.mean(mean_frequencies[:,1][minimum_time_pop2:])} Calculated with phases')
+        print(f'SubPop 3 mean frequency: {numpy.mean(mean_frequencies[:,2][minimum_time_pop3:])} Calculated with phases')
 
-        syncs = [numpy.mean(syncs[0][300:]), numpy.mean(syncs[1][300:]), numpy.mean(syncs[2][300:]), numpy.mean(globsync[300:])]
-        freqs = [frequencies[0], frequencies[1], frequencies[2]]
+        syncs = [numpy.mean(syncs[0][minimum_time_pop1:]), numpy.mean(syncs[1][minimum_time_pop2:]), numpy.mean(syncs[2][minimum_time_pop3:]), numpy.mean(globsync[300:])]
+        freqs = [numpy.mean(mean_frequencies[:,0][minimum_time_pop1:]), numpy.mean(mean_frequencies[:,1][minimum_time_pop2:]), numpy.mean(mean_frequencies[:,2][minimum_time_pop1:])]
 
         dictionary_of_results[f'Iteration {i+1}'] = values[0], values[1], values[2], values[3], values[4], values[5], syncs[0], syncs[1], syncs[2], syncs[3], freqs[0], freqs[1], freqs[2]
 

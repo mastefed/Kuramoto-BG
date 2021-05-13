@@ -71,7 +71,7 @@ class kurasaka_oscillators:
 
         return self.initialvalues
 
-    def setmodelconstants(self, list_of_values, fixed=True):
+    def setmodelconstants(self, list_of_k, fixed=True):
         """Set the model's coupling constants, phase delay values and natural frequencies values
 
         Args:
@@ -113,13 +113,13 @@ class kurasaka_oscillators:
             self.k22 = 0.5 
             self.k33 = 0.2
 
-            self.k12 = list_of_values[0]
-            self.k13 = list_of_values[1]
-            self.k23 = list_of_values[2]
+            self.k12 = list_of_k[0]
+            self.k13 = list_of_k[1]
+            self.k23 = list_of_k[2]
             
-            self.k21 = list_of_values[3]
-            self.k31 = list_of_values[4]
-            self.k32 = list_of_values[5]
+            self.k21 = list_of_k[3]
+            self.k31 = list_of_k[4]
+            self.k32 = list_of_k[5]
 
             self.alpha11 = 0. 
             self.alpha22 = 0. 
@@ -152,106 +152,65 @@ class kurasaka_oscillators:
 
         return self.kmatrix, self.omegamatrix, self.alphamatrix
 
-    def kurasaka_function(self, x, t):
-        """
-        Setup the Differential Equations to be used in Scipy.odeint later.
-
-        Parameters
-        ----------
-        x : float
-            The array of initial values for the Initial Value Problem.
-        t : float
-            Dummy variable needed to use Scipy.odeint.
-
-        Returns
-        -------
-        Numpy Array
-            Returns the array of Differential Equations.
-
-        """
-        self.variables = {}
-        # gets an array of phases' value at time t_k, odeint update the values everytime for every t_j
-        for i in range(self.N1):
-            self.variables[f'theta1{i}'] = x[i] 
-
-        for i in range(self.N2):
-            self.variables[f'theta2{i}'] = x[self.N1 + i]
-
-        for i in range(self.N3):
-            self.variables[f'theta3{i}'] = x[self.N1 + self.N2 + i]
-
-        def interaction(k, z):
-            """ Creates the interaction terms of the Kuramoto model, these are 
-                proportional to the sine of the difference between the phases
-            """
-            interaction_terms = 0.
-            for j in range(self.Narray[k-1]):
-                sine_term = numpy.sin(self.variables[f'theta{k}{j}'] - self.variables[f'theta{z}{i}'] - self.alphamatrix[z-1,k-1])
-                interaction_terms += self.kmatrix[z-1,k-1]/self.Narray[k-1] * sine_term
-            return interaction_terms
-
-        # Creates and updates the values' array with the desired differential equations
-        self.dthetadt = [] 
-
-        for i in range(self.N1):
-            self.dthetadt.append(
-                self.omega1[i] + interaction(1, 1) + interaction(2, 1) + interaction(3, 1)
-            )
-
-        for i in range(self.N2):
-            self.dthetadt.append(
-                self.omega2[i] + interaction(1, 2) + interaction(2, 2) + interaction(3, 2)
-            )
-
-        for i in range(self.N3):
-            self.dthetadt.append(
-                self.omega3[i] + interaction(1, 3) + interaction(2, 3) + interaction(3, 3)
-            )
-
-        return numpy.array(self.dthetadt) # returns the function to be put in .evolve()
-
-    def evolve(self, function):
-        """
-        This function solves the Differential equations using Odeint by Scipy.
-
-        Parameters
-        ----------
-        function : Numpy Array
-            The array of Differential Equations to be solved.
-
-        Returns
-        -------
-        Numpy Array
-            Returns a Numpy Array containing the points evaluated at every t_j by Scipy.odeint.
-
-        """
-        self.kurasaka_evo = odeint(function, self.initialvalues, self.times)
-        return self.kurasaka_evo
-    
-    def evolvewithnoise(self, function):
-        """
-        This is analogous to the evolve() function but it adds some noise to the
-        differential equations.
-
-        Parameters
-        ----------
-        function : Numpy Array
-            The array of Differential Equations to be solved.
-
-        Returns
-        -------
-        Numpy Array
-            Returns a Numpy Array containing the points evaluated at every t_j by Scipy.odeint.
-
-        """
-        def noise(x, t):
-            self.sigma = []
-            for i in range(self.N):
-                self.sigma.append(0.8)
-            self.sigma = numpy.diag(self.sigma)
-            return self.sigma
+    def evolve(self, noisy=True):
         
-        self.kurasaka_evo = itoint(function, noise, self.initialvalues, self.times)
+        def kurasaka_function(x, t):
+            variables = {}
+            """ gets an array of phases' value at time t_k, odeint update the values everytime for every t_j
+            """
+            for i in range(self.N1):
+                variables[f'theta1{i}'] = x[i] 
+
+            for i in range(self.N2):
+                variables[f'theta2{i}'] = x[self.N1 + i]
+
+            for i in range(self.N3):
+                variables[f'theta3{i}'] = x[self.N1 + self.N2 + i]
+
+            def interaction(k, z):
+                """ Creates the interaction terms of the Kuramoto model, these are 
+                    proportional to the sine of the difference between the phases
+                """
+                interaction_terms = 0.
+                for j in range(self.Narray[k-1]):
+                    sine_term = numpy.sin(variables[f'theta{k}{j}'] - variables[f'theta{z}{i}'] - self.alphamatrix[z-1,k-1])
+                    interaction_terms += self.kmatrix[z-1,k-1]/self.Narray[k-1] * sine_term
+                return interaction_terms
+
+            """ Creates and updates the values' array with the desired differential equations
+            """
+            dthetadt = [] 
+
+            for i in range(self.N1):
+                dthetadt.append(
+                    self.omega1[i] + interaction(1, 1) + interaction(2, 1) + interaction(3, 1)
+                )
+
+            for i in range(self.N2):
+                dthetadt.append(
+                    self.omega2[i] + interaction(1, 2) + interaction(2, 2) + interaction(3, 2)
+                )
+
+            for i in range(self.N3):
+                dthetadt.append(
+                    self.omega3[i] + interaction(1, 3) + interaction(2, 3) + interaction(3, 3)
+                )
+
+            dthetadt = numpy.array(dthetadt)
+            return dthetadt
+
+        def noise(x, t):
+            sigma = []
+            for i in range(self.N):
+                sigma.append(0.8)
+            sigma = numpy.diag(sigma)
+            return sigma
+        
+        if noisy is True:
+            self.kurasaka_evo = itoint(kurasaka_function, noise, self.initialvalues, self.times)
+        elif noisy is False:
+            self.kurasaka_evo = odeint(kurasaka_function, self.initialvalues, self.times)    
+        
         return self.kurasaka_evo
 
     def findorderparameter(self, phases):
@@ -292,7 +251,7 @@ class kurasaka_oscillators:
 
         return self.syncs, self.orderparameters # returns |Z| and Z, both can be useful
 
-    def findglobalorderparameter(self):
+    def findglobalorderparameter(self, order_parameters):
         def mediationterm(sigma, tau):
             mediation = self.kmatrix[sigma,tau]/self.kmatrix.sum()*numpy.exp(complex(0,-self.alphamatrix[sigma,tau]))
             return mediation
@@ -303,7 +262,7 @@ class kurasaka_oscillators:
             partialglobalorderparam = 0.
             for sigma in range(3):
                 for tau in range(3):
-                    partialglobalorderparam += mediationterm(sigma,tau)*self.orderparameters[tau][i]
+                    partialglobalorderparam += mediationterm(sigma,tau)*order_parameters[tau][i]
             self.globalorderparameter.append(partialglobalorderparam)
 
         self.sync_global = []
@@ -356,7 +315,42 @@ class kurasaka_oscillators:
         elif save == False:
             pass
 
-    def findperiod(self):
+    def findperiod_phases(self, phases):
+        self.oscillators_frequencies = []
+        
+        for j in range(self.time_points - 1):
+            dummy_array = []
+            for i in range(self.N):
+                frequency = ((phases[j+1,i] - phases[j,i])/(self.times[j+1] - self.times[j]))/(2*numpy.pi)
+                dummy_array.append(frequency)
+            self.oscillators_frequencies.append(dummy_array)
+            
+        self.oscillators_frequencies = numpy.matrix(self.oscillators_frequencies)
+        
+        self.populations_mean_frequencies = []
+        for i in range(self.time_points - 1):
+            dummy_array = []
+            dummy_array.append(
+                numpy.mean(
+                    self.oscillators_frequencies[i, :self.N1]
+                )
+            )
+            dummy_array.append(
+                numpy.mean(
+                    self.oscillators_frequencies[i, self.N1:self.N1 + self.N2]
+                )
+            )
+            dummy_array.append(
+                numpy.mean(
+                    self.oscillators_frequencies[i, self.N1 + self.N2:]
+                )
+            )
+            dummy_array = numpy.array(dummy_array)
+            self.populations_mean_frequencies.append(dummy_array)
+        self.populations_mean_frequencies = numpy.matrix(self.populations_mean_frequencies)
+        return self.oscillators_frequencies, self.populations_mean_frequencies
+
+    def findperiod_orderparameter(self):
         self.peaks_phase_subpop1,_ = find_peaks(self.real_ordparam_subpop1)
         self.peaks_phase_subpop1 = self.peaks_phase_subpop1*self.time_end/self.time_points
         self.peaks_phase_subpop2,_ = find_peaks(self.real_ordparam_subpop2)
