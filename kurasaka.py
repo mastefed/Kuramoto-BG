@@ -324,31 +324,62 @@ class kurasaka_oscillators:
                 frequency = ((phases[j+1,i] - phases[j,i])/(self.times[j+1] - self.times[j]))/(2*numpy.pi)
                 dummy_array.append(frequency)
             self.oscillators_frequencies.append(dummy_array)
-            
+            """ For each time point t_j I get an array containing
+                all the frequencies for every oscillator
+            """
         self.oscillators_frequencies = numpy.matrix(self.oscillators_frequencies)
         
         self.populations_mean_frequencies = []
+        self.populations_std_of_frequencies = []
         for i in range(self.time_points - 1):
-            dummy_array = []
-            dummy_array.append(
+            dummy_array_freq = []
+            dummy_array_std = []
+            
+            dummy_array_freq.append(
                 numpy.mean(
                     self.oscillators_frequencies[i, :self.N1]
                 )
             )
-            dummy_array.append(
+            dummy_array_freq.append(
                 numpy.mean(
                     self.oscillators_frequencies[i, self.N1:self.N1 + self.N2]
                 )
             )
-            dummy_array.append(
+            dummy_array_freq.append(
                 numpy.mean(
                     self.oscillators_frequencies[i, self.N1 + self.N2:]
                 )
             )
-            dummy_array = numpy.array(dummy_array)
-            self.populations_mean_frequencies.append(dummy_array)
+            dummy_array_freq = numpy.array(dummy_array_freq)
+            self.populations_mean_frequencies.append(dummy_array_freq)
+            """ For each time point t_j I get an array containing
+                3 values: mean frequency of pop1, pop2 and pop3 
+            """
+            
+            dummy_array_std.append(
+                numpy.std(
+                    self.oscillators_frequencies[i, :self.N1]
+                )
+            )
+            dummy_array_std.append(
+                numpy.std(
+                    self.oscillators_frequencies[i, self.N1:self.N1 + self.N2]
+                )
+            )
+            dummy_array_std.append(
+                numpy.std(
+                    self.oscillators_frequencies[i, self.N1 + self.N2:]
+                )
+            )
+            dummy_array_std = numpy.array(dummy_array_std)
+            self.populations_std_of_frequencies.append(dummy_array_std)
+            """ For each time point t_j I get an array containing
+                3 values: std of frequency of pop1, pop2 and pop3 
+            """
+            
         self.populations_mean_frequencies = numpy.matrix(self.populations_mean_frequencies)
-        return self.oscillators_frequencies, self.populations_mean_frequencies
+        self.populations_std_of_frequencies = numpy.matrix(self.populations_std_of_frequencies)
+        return self.oscillators_frequencies, self.populations_mean_frequencies, self.populations_std_of_frequencies
 
     def findperiod_orderparameter(self):
         self.peaks_phase_subpop1,_ = find_peaks(self.real_ordparam_subpop1)
