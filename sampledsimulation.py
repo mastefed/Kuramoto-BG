@@ -10,7 +10,7 @@ from os import path
 if __name__ == "__main__":
     t0 = time.time()
 
-    values_to_iterate = np.linspace(35., 65., 10)
+    values_to_iterate = np.linspace(30., 90., 10)
     fixedval = 5.
 
     iterator = it.product(values_to_iterate, repeat=2)
@@ -79,15 +79,15 @@ if __name__ == "__main__":
         
         globsync, globordparam = kuramotosakaguchi.findglobalorderparameter(ordparams)
 
-        print(f'Mean Sync for SuPop 1: {numpy.mean(syncs[0][minimum_time_pop1:])}')
-        print(f'Mean Sync for SuPop 2: {numpy.mean(syncs[1][minimum_time_pop2:])}')
-        print(f'Mean Sync for SuPop 3: {numpy.mean(syncs[2][minimum_time_pop3:])}')
+        print(f'Mean Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
+        print(f'Mean Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
+        print(f'Mean Sync for SuPop 3: {numpy.mean(syncs[2][300:])}')
         print(f'Mean Global Sync: {numpy.mean(globsync[300:])}\n')
 
         frequencies_array, mean_frequencies, std_frequencies = kuramotosakaguchi.findperiod_phases(phasesevolution)
-        print(f'SubPop 1 mean frequency: {numpy.mean(mean_frequencies[:,0][minimum_time_pop1:])} +- {numpy.mean(std_frequencies[:,0][minimum_time_pop1:])} Hz')
-        print(f'SubPop 2 mean frequency: {numpy.mean(mean_frequencies[:,1][minimum_time_pop2:])} +- {numpy.mean(std_frequencies[:,1][minimum_time_pop2:])} Hz')
-        print(f'SubPop 3 mean frequency: {numpy.mean(mean_frequencies[:,2][minimum_time_pop3:])} +- {numpy.mean(std_frequencies[:,2][minimum_time_pop3:])} Hz')
+        print(f'SubPop 1 mean frequency: {numpy.mean(mean_frequencies[:,0][300:])} +- {numpy.mean(std_frequencies[:,0][300:])} Hz')
+        print(f'SubPop 2 mean frequency: {numpy.mean(mean_frequencies[:,1][300:])} +- {numpy.mean(std_frequencies[:,1][300:])} Hz')
+        print(f'SubPop 3 mean frequency: {numpy.mean(mean_frequencies[:,2][300:])} +- {numpy.mean(std_frequencies[:,2][300:])} Hz')
 
         syncs = [numpy.mean(syncs[0][minimum_time_pop1:]), numpy.mean(syncs[1][minimum_time_pop2:]), numpy.mean(syncs[2][minimum_time_pop3:]), numpy.mean(globsync[300:])]
         freqs = [numpy.mean(mean_frequencies[:,0][minimum_time_pop1:]), numpy.mean(mean_frequencies[:,1][minimum_time_pop2:]), numpy.mean(mean_frequencies[:,2][minimum_time_pop1:])]

@@ -7,7 +7,6 @@ Created on Wed Mar 31 08:33:47 2021
 
 from kurasaka import *
 import time
-import timeit
 
 if __name__ == "__main__":
     t0 = time.time()
@@ -56,9 +55,9 @@ if __name__ == "__main__":
     
     globsync, globordparam = kuramotosakaguchi.findglobalorderparameter(ordparams)
 
-    print(f'Sync for SuPop 1: {numpy.mean(syncs[0][time_points_1.min():])}')
-    print(f'Sync for SuPop 2: {numpy.mean(syncs[1][time_points_2.min():])}')
-    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][time_points_3.min():])}')
+    print(f'Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
+    print(f'Sync for SuPop 2: {numpy.mean(syncs[1][300:])}')
+    print(f'Sync for SuPop 3: {numpy.mean(syncs[2][300:])}')
     print(f'Global Sync: {numpy.mean(globsync[300:])}\n')
     
     print(f'SubPop 1 frequency: {numpy.mean(mean_frequencies[:,0][time_points_1.min():])} Calculated with phases')
