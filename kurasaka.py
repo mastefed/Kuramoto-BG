@@ -153,7 +153,18 @@ class kurasaka_oscillators:
         return self.kmatrix, self.omegamatrix, self.alphamatrix
 
     def evolve(self, noisy=True):
+        """ Given the initial values for every phase oscillator, this function calculates
+            the next set of values using the Kuramoto-Sakaguchi set of equations.
+            One can choose to use the noiseless Kuramoto-Sakaguchi model or add some noise.
+            When noise is provided the next set of points are calculated using
+            the Rößler2010 order 1.0 strong Stochastic Runge-Kutta algorithm SRI2.
+            When noise is not provided the next set of points are calculated using
+            scipy.odeint().
         
+
+        Args:
+            noisy (bool, optional): Choose if you want noise or not. Defaults to True.
+        """
         def kurasaka_function(x, t):
             variables = {}
             """ gets an array of phases' value at time t_k, odeint update the values everytime for every t_j
