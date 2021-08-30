@@ -18,8 +18,6 @@ if __name__ == "__main__":
     #list = [K12, K13, K21, K23, K31, K32]
     values_to_choose = [[val[0], fixedval, val[1], fixedval, fixedval, fixedval] for val in iterator]
 
-    #In questo modo values_to_choose[i] è una lista di K da testare
-
     num_subpop1 = 40
     num_subpop2 = 120
     num_subpop3 = 20
