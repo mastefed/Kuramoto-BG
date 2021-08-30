@@ -78,16 +78,16 @@ class kurasaka_oscillators:
             List of 2D arrays: Returns the Matrices containing K and alpha
         """
         k11 = 0.5
-        k22 = 0.5 
-        k33 = 0.2
-        
         k12 = list_of_k[0]
         k13 = list_of_k[1]
-        k23 = list_of_k[2]
         
-        k21 = k12 # list_of_k[3]
-        k31 = k13 # list_of_k[4]
-        k32 = k23 # list_of_k[5]
+        k21 = list_of_k[2]
+        k22 = 0.5
+        k23 = list_of_k[3]
+        
+        k31 = list_of_k[4]
+        k32 = list_of_k[5]
+        k33 = 0.2
         
         alpha11 = 0. 
         alpha22 = 0. 
@@ -243,35 +243,45 @@ class kurasaka_oscillators:
             phase_global.append(numpy.angle(globalorderparameter[i]))
 
         return sync_global, globalorderparameter
-
-    def ordparam_phase(self, times, orderparameters):
-        real_ordparam_subpop1 = []
-        real_ordparam_subpop2 = []
-        real_ordparam_subpop3 = []
+    
+    def retrieveSyncSpeed(self, syncs):
+        syncSpeeds = {}
         
-        for i in range(len(times)):
-            real_ordparam_subpop1.append(
-                orderparameters[0][i].real
-            )
-            real_ordparam_subpop2.append(
-                orderparameters[1][i].real
-            )
-            real_ordparam_subpop3.append(
-                orderparameters[2][i].real
-            )
+        if numpy.any(numpy.array(syncs[0]) > 0.8) == True:
+            minTimePointPop1 = numpy.argwhere(numpy.array(syncs[0]) > 0.8).min()
+            syncSpeeds['Population 1 Sync Speed'] = minTimePointPop1
+            print(f'Population 1 reaches |Z|>0.80 in {minTimePointPop1} integration points')
+        else:
+            minTimePointPop1 = None
+            syncSpeeds['Population 1 Sync Speed'] = minTimePointPop1
+            print('Population 1 didn\'t reach a |Z| value big enough to be considered synchronized')
+            
+        if numpy.any(numpy.array(syncs[1]) > 0.8) == True:
+            minTimePointPop2 = numpy.argwhere(numpy.array(syncs[1]) > 0.8).min()
+            syncSpeeds['Population 2 Sync Speed'] = minTimePointPop2
+            print(f'Population 2 reaches |Z|>0.80 in {minTimePointPop2} integration points')
+        else:
+            minTimePointPop2 = None
+            syncSpeeds['Population 2 Sync Speed'] = minTimePointPop2
+            print('Population 2 didn\'t reach a |Z| value big enough to be considered synchronized')
         
-        real_part_orderparameters = [real_ordparam_subpop1, real_ordparam_subpop2, real_ordparam_subpop3]
+        if numpy.any(numpy.array(syncs[2]) > 0.8) == True:
+            minTimePointPop3 = numpy.argwhere(numpy.array(syncs[2]) > 0.8).min()
+            syncSpeeds['Population 3 Sync Speed'] = minTimePointPop3
+            print(f'Population 3 reaches |Z|>0.80 in {minTimePointPop3} integration points\n')
+        else:
+            minTimePointPop3 = None
+            syncSpeeds['Population 3 Sync Speed'] = minTimePointPop3
+            print('Population 3 didn\'t reach a |Z| value big enough to be considered synchronized\n')    
         
-        return real_part_orderparameters
+        return syncSpeeds
 
     def psdofordparam(self, time_start, time_end, time_points, real_part_orderparameters, save=False, savepath=None):
         
         my_fs = 1./((time_end - time_start)/time_points)
         
         freq1, psd1 = welch(real_part_orderparameters[0], fs = my_fs)
-        
         freq2, psd2 = welch(real_part_orderparameters[1], fs = my_fs)
-        
         freq3, psd3 = welch(real_part_orderparameters[2], fs = my_fs)
         
         plt.figure('PSD', figsize=(6,6))
@@ -290,32 +300,98 @@ class kurasaka_oscillators:
         elif save == False:
             pass
 
-    def psdofsyncs(self, time_start, time_end, time_points, syncs, save=False, savepath=None):
+    def psdofsyncs(self, time_start, time_end, time_points, syncs, printPlot=False, save=False, savepath=None):
         
         my_fs = 1./((time_end - time_start)/time_points)
         
-        freq1, psd1 = welch(syncs[0], fs = my_fs)
+        first_sync = syncs[0] - numpy.mean(syncs[0])
+        second_sync = syncs[1] - numpy.mean(syncs[1])
+        third_sync = syncs[2] - numpy.mean(syncs[2])
         
-        freq2, psd2 = welch(syncs[1], fs = my_fs)
+        freq1, psd1 = welch(first_sync, fs = my_fs)
+        freq2, psd2 = welch(second_sync, fs = my_fs)   
+        freq3, psd3 = welch(third_sync, fs = my_fs)
         
-        freq3, psd3 = welch(syncs[2], fs = my_fs)
+        freq1max = freq1[numpy.argmax(psd1)]
+        freq2max = freq2[numpy.argmax(psd2)]
+        freq3max = freq3[numpy.argmax(psd3)]
         
-        plt.figure('PSD', figsize=(6,6))
-        plt.title('PSD of |Z|')
-        plt.xlabel('Frequencies [Hz]')
-        plt.ylabel('PSD')
-        plt.grid()
-        plt.plot(freq1, psd1, label='Pop. 1')
-        plt.plot(freq2, psd2, label='Pop. 2')
-        plt.plot(freq3, psd3, label='Pop. 3')
-        plt.legend()
+        psd1max = psd1[numpy.argmax(psd1)]
+        psd2max = psd2[numpy.argmax(psd2)]
+        psd3max = psd3[numpy.argmax(psd3)]
         
-        if save == True:
-            plt.savefig(savepath)
-        elif save == False:
-            pass
+        psds = [psd1, psd2, psd3]
+        freqsmax = [freq1max, freq2max, freq3max]
+        psdsmax = [psd1max, psd2max, psd3max]
+        
+        if printPlot == True:
+            plt.figure('PSD', figsize=(6,6))
+            plt.title('PSD of |Z|')
+            plt.xlabel('Frequencies [Hz]')
+            plt.ylabel('PSD')
+            plt.xlim((0,10))
+            plt.grid()
+            plt.plot(freq1, psd1, label='Pop. 1')
+            plt.plot(freq2, psd2, label='Pop. 2')
+            plt.plot(freq3, psd3, label='Pop. 3')
+            plt.axvspan(1, 4, color='silver', alpha=0.5)
+            plt.legend()
+            
+            if save == True:
+                plt.savefig(savepath)
+            elif save == False:
+                pass
+        
+        return psds, freqsmax, psdsmax
+        
+    def detectDeltas(self, psdOfSyncs):
+        psd1 = psdOfSyncs[0]
+        psd2 = psdOfSyncs[1]
+        psd3 = psdOfSyncs[2]
+        
+        delta_pop1 = simps(psd1[3:6])
+        
+        psd1max_LowDelta = psd1[numpy.argmax(psd1[:4])]
+        threshold_LowDelta_Pop1 = numpy.mean(psd1)+5*numpy.std(psd1)
+        
+        if (psd1max_LowDelta > threshold_LowDelta_Pop1):
+            print("Population 1: Sub Delta oscillations detected.")
+            lowDeltaDetection_Pop1 = True
+        else:
+            print("Population 1: Sub Delta oscillations not detected.")
+            lowDeltaDetection_Pop1 = False
+            
+        delta_pop2 = simps(psd2[3:6])
+        
+        psd2max_LowDelta = psd2[numpy.argmax(psd2[:4])]
+        threshold_LowDelta_Pop2 = numpy.mean(psd2)+5*numpy.std(psd2)
+        
+        if (psd2max_LowDelta > threshold_LowDelta_Pop2):
+            print("Population 2: Sub Delta oscillations detected.")
+            lowDeltaDetection_Pop2 = True
+        else:
+            print("Population 2: Sub Delta oscillations not detected.")
+            lowDeltaDetection_Pop2 = False
+            
+        delta_pop3 = simps(psd3[3:6])
+        
+        psd3max_LowDelta = psd3[numpy.argmax(psd3[:4])]
+        threshold_LowDelta_Pop3 = numpy.mean(psd3)+5*numpy.std(psd3)
+        
+        if (psd3max_LowDelta > threshold_LowDelta_Pop3):
+            print("Population 3: Sub Delta oscillations detected.\n")
+            lowDeltaDetection_Pop3 = True
+        else:
+            print("Population 3: Sub Delta oscillations not detected.\n")
+            lowDeltaDetection_Pop3 = False
+        
+        lowDeltaDetection = [lowDeltaDetection_Pop1, lowDeltaDetection_Pop2, lowDeltaDetection_Pop3]
+        deltaIntegration = [delta_pop1, delta_pop2, delta_pop3]
+        
+        return lowDeltaDetection, deltaIntegration
+        
 
-    def findperiod_phases(self, time_points, times, phases):
+    def findFrequenciesMeanStd(self, time_points, times, phases, syncs):
         oscillators_frequencies = []
         
         for j in range(time_points - 1):
@@ -376,50 +452,35 @@ class kurasaka_oscillators:
         populations_mean_frequencies = numpy.matrix(populations_mean_frequencies)
         populations_std_of_frequencies = numpy.matrix(populations_std_of_frequencies)
         
+        if numpy.any(numpy.array(syncs[0]) > 0.8) == True:
+            min_tp_1 = numpy.argwhere(numpy.array(syncs[0]) > 0.8).min()
+            print(f'Population 1\'s mean frequency after synchronization: {numpy.mean(populations_mean_frequencies[:,0][min_tp_1:])}')
+        else:
+            print(f'Population 1 can\'t be considered synchronized, its mean frequency across the simulation is  {numpy.mean(populations_mean_frequencies[:,0][300:])}')
+            
+        if numpy.any(numpy.array(syncs[1]) > 0.8) == True:
+            min_tp_2 = numpy.argwhere(numpy.array(syncs[1]) > 0.8).min()
+            print(f'Population 2\'s mean frequency after synchronization: {numpy.mean(populations_mean_frequencies[:,1][min_tp_2:])}')
+        else:
+            print(f'Population 2 can\'t be considered synchronized, its mean frequency across the simulation is  {numpy.mean(populations_mean_frequencies[:,1][300:])}')
+            
+        if numpy.any(numpy.array(syncs[2]) > 0.8) == True:
+            min_tp_3 = numpy.argwhere(numpy.array(syncs[2]) > 0.8).min()
+            print(f'Population 3\'s mean frequency after synchronization: {numpy.mean(populations_mean_frequencies[:,2][min_tp_3:])}\n')
+        else:
+            print(f'Population 3 can\'t be considered synchronized, its mean frequency across the simulation is  {numpy.mean(populations_mean_frequencies[:,2][300:])}\n')
+        
         return oscillators_frequencies, populations_mean_frequencies, populations_std_of_frequencies
-
-    def findperiod_orderparameter(self, time_end, time_points, real_part_orderparameters):
-        peaks_phase_subpop1,_ = find_peaks(real_part_orderparameters[0])
-        peaks_phase_subpop1 = peaks_phase_subpop1 * time_end/time_points
         
-        peaks_phase_subpop2,_ = find_peaks(real_part_orderparameters[1])
-        peaks_phase_subpop2 = peaks_phase_subpop2 * time_end/time_points
-        
-        peaks_phase_subpop3,_ = find_peaks(real_part_orderparameters[2])
-        peaks_phase_subpop3 = peaks_phase_subpop3 * time_end/time_points
-        
-        periods_subpop1 = []
-        periods_subpop2 = []
-        periods_subpop3 = []
-        
-        for i in range(len(peaks_phase_subpop1) - 1):
-            periods_subpop1.append(1/ (peaks_phase_subpop1[i+1] - peaks_phase_subpop1[i]))
-        
-        mean_frequency_subpop1 = numpy.mean(periods_subpop1)
-        
-        for i in range(len(peaks_phase_subpop2) - 1):
-            periods_subpop2.append(1 / (peaks_phase_subpop2[i+1] - peaks_phase_subpop2[i]))
-        
-        mean_frequency_subpop2 = numpy.mean(periods_subpop2)
-        
-        for i in range(len(peaks_phase_subpop3) - 1):
-            periods_subpop3.append(1 / (peaks_phase_subpop3[i+1] - peaks_phase_subpop3[i]))
-        
-        mean_frequency_subpop3 = numpy.mean(periods_subpop3)
-        
-        mean_frequencies = [mean_frequency_subpop1, mean_frequency_subpop2, mean_frequency_subpop3]
-        
-        return mean_frequencies
-        
-    def printsyncparam(self, times, syncs, globsync, save, savepath):
+    def printsyncparam(self, times, syncs, globsync, save=False, savepath=None):
         plt.figure(f'{self.N} Oscillators Sync', figsize=(13,6))
         plt.title(f'{self.N} Oscillators Sync')
         plt.plot(times, syncs[0], label='SubPop 1')
         plt.plot(times, syncs[1], label='SubPop 2')
         plt.plot(times, syncs[2], label='SubPop 3')
         plt.plot(times, globsync, label='Global')
-        plt.xlabel('Time Steps')
-        plt.ylabel('R')
+        plt.xlabel('Time [s]')
+        plt.ylabel('|Z|')
         plt.ylim([0.,1.])
         plt.yticks(numpy.arange(0, 1.1, step=0.1))
         plt.legend(loc='lower left')
@@ -431,7 +492,7 @@ class kurasaka_oscillators:
         plt.plot(times, globsync, label='Global')
         plt.xlim([5.,5.5])
         plt.xticks([5.1, 5.2, 5.3, 5.4])
-        plt.yticks([.2, .4, .6, .8, 1.])
+        plt.yticks([.2, .4, .6, .8])
         plt.tick_params(axis='x', direction='in', pad=-15)
         plt.tick_params(axis='y', direction='in', pad=-22)
         
@@ -440,20 +501,20 @@ class kurasaka_oscillators:
         elif save == False:
             pass
 
-    def printcosineordparam(self, times, real_part_orderparameters, save, savepath):
+    def printcosineordparam(self, times, orderparameters, save=False, savepath=None):
         plt.figure("Subpops' Phase Evolution", figsize=(13,6))
         plt.title("Subpops' Phase Evolution")
-        plt.plot(times, real_part_orderparameters[0], label='SubPop 1')
-        plt.plot(times, real_part_orderparameters[1], label='SubPop 2')
-        plt.plot(times, real_part_orderparameters[2], label='SubPop 3')
+        plt.plot(times, numpy.real(orderparameters[0]), label='SubPop 1')
+        plt.plot(times, numpy.real(orderparameters[1]), label='SubPop 2')
+        plt.plot(times, numpy.real(orderparameters[2]), label='SubPop 3')
         plt.xlabel('Time Steps')
         plt.xlim([5.,7.])
         plt.legend(loc='lower left')
         
         plt.axes([.69, .125, .2, .2])
-        plt.plot(times, real_part_orderparameters[0], label='SubPop 1')
-        plt.plot(times, real_part_orderparameters[1], label='SubPop 2')
-        plt.plot(times, real_part_orderparameters[2], label='SubPop 3')
+        plt.plot(times, numpy.real(orderparameters[0]), label='SubPop 1')
+        plt.plot(times, numpy.real(orderparameters[1]), label='SubPop 2')
+        plt.plot(times, numpy.real(orderparameters[2]), label='SubPop 3')
         plt.xlim([5.,5.2])
         plt.ylim([-1.3,1.1])
         plt.xticks([5.050, 5.100, 5.150])
@@ -466,6 +527,21 @@ class kurasaka_oscillators:
             plt.savefig(savepath)
         elif save == False:
             pass
+
+    def printRealImagPartOrderParameter(self, orderparameters):
+        plt.rc('text', usetex=True)
+        plt.figure("RealImagPartOrderParameter")
+        plt.xlabel(r"$\rho_1 \cos(\Psi_1)$")
+        plt.ylabel(r"$\rho_1 \sin(\Psi_1)$")
+        plt.xlim((-1,1))
+        plt.ylim((-1,1))
+        ordparam_pop1 = orderparameters[0]
+        partreale_ordparam_pop1 = numpy.real(ordparam_pop1)
+        partimag_ordparam_pop1 = numpy.imag(ordparam_pop1)
+        plt.plot(partreale_ordparam_pop1, partimag_ordparam_pop1)
+        plt.scatter(partreale_ordparam_pop1[0], partimag_ordparam_pop1[0], c='red', s=100, label='Initial point')
+        plt.scatter(partreale_ordparam_pop1[-1], partimag_ordparam_pop1[-1], c='green', s=100, label='Final point')
+        plt.legend()
 
     def animateoscillators(self, times, time_start, time_end, phaseevolution, syncs, globsync, orderparameter, globorderparameter):     
         def animate_function(i):
