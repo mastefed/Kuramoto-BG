@@ -3,44 +3,47 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: Tesi.aux
 The style file: unsrt.bst
 Database file #1: biblio.bib
-You've used 6 entries,
+Warning--entry type for "bgnuclei" isn't style-file defined
+--line 11 of file biblio.bib
+You've used 8 entries,
             1791 wiz_defined-function locations,
-            487 strings with 4517 characters,
-and the built_in function-call counts, 1294 in all, are:
-= -- 119
-> -- 39
+            496 strings with 4916 characters,
+and the built_in function-call counts, 1715 in all, are:
+= -- 141
+> -- 81
 < -- 0
-+ -- 16
-- -- 10
-* -- 91
-:= -- 213
-add.period$ -- 18
-call.type$ -- 6
-change.case$ -- 6
++ -- 31
+- -- 23
+* -- 122
+:= -- 290
+add.period$ -- 23
+call.type$ -- 8
+change.case$ -- 8
 chr.to.int$ -- 0
-cite$ -- 6
-duplicate$ -- 53
-empty$ -- 135
-format.name$ -- 10
-if$ -- 285
+cite$ -- 8
+duplicate$ -- 67
+empty$ -- 171
+format.name$ -- 23
+if$ -- 371
 int.to.chr$ -- 0
-int.to.str$ -- 6
-missing$ -- 6
-newline$ -- 33
-num.names$ -- 6
-pop$ -- 8
+int.to.str$ -- 8
+missing$ -- 7
+newline$ -- 42
+num.names$ -- 8
+pop$ -- 14
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 20
+skip$ -- 30
 stack$ -- 0
-substring$ -- 115
-swap$ -- 6
+substring$ -- 121
+swap$ -- 8
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 12
-width$ -- 7
-write$ -- 67
+while$ -- 15
+width$ -- 9
+write$ -- 85
+(There was 1 warning)

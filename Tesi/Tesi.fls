@@ -1,4 +1,4 @@
-PWD /Users/federicom/Desktop/Tesi
+PWD /Users/federicom/Desktop/Kuramoto-BG/Tesi
 INPUT /usr/local/texlive/2021/texmf.cnf
 INPUT /usr/local/texlive/2021/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2021/texmf-var/web2c/pdftex/pdflatex.fmt
@@ -952,6 +952,15 @@ INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmr10.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/vf/adobe/palatino/pplr9t.vf
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/vf/adobe/palatino/pplr9t.vf
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/mathpazo/fplmr.tfm
+INPUT ./Images/bgnuclei.jpg
+INPUT ./Images/bgnuclei.jpg
+INPUT Images/bgnuclei.jpg
+INPUT ./Images/bgnuclei.jpg
+INPUT ./Images/bgnuclei.jpg
+INPUT ./Images/network.png
+INPUT Images/network.png
+INPUT ./Images/network.png
+INPUT ./Images/network.png
 INPUT ./Tesi.bbl
 INPUT Tesi.bbl
 INPUT ./Tesi.bbl

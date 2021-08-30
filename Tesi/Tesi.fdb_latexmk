@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex Tesi"] 1628617048 "Tesi.aux" "Tesi.bbl" "Tesi" 1628617268
+["bibtex Tesi"] 1629106901 "Tesi.aux" "Tesi.bbl" "Tesi" 1629106902
   "/usr/local/texlive/2021/texmf-dist/bibtex/bst/base/unsrt.bst" 1292289607 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "Tesi.aux" 1628617268 4076 16fa224619e717a27fb3d0ae0d5dce0b "pdflatex"
-  "biblio.bib" 1628609558 2276 6ba28ee39d85135e73ac38f6a7a4f788 ""
+  "Tesi.aux" 1629106902 4949 be845ceb7308f58a9bfdf14f521ef5e8 "pdflatex"
+  "biblio.bib" 1629106898 4405 e0656854fee686c743e873358c8d8d46 ""
   (generated)
-  "Tesi.blg"
   "Tesi.bbl"
-["pdflatex"] 1628617267 "Tesi.tex" "Tesi.pdf" "Tesi" 1628617268
+  "Tesi.blg"
+["pdflatex"] 1629106901 "Tesi.tex" "Tesi.pdf" "Tesi" 1629106902
   "/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2021/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2021/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm" 1136768653 2520 53e01eef820ca829e42c1333c3fd02b9 ""
@@ -160,18 +160,20 @@
   "/usr/local/texlive/2021/texmf.cnf" 1616695596 577 4c1911a7228e554c6032256d3cf5567d ""
   "Container/thesistemplate.cls" 1628609558 6949 e483d4929e30829cb161bd9946d06011 ""
   "Images/MediumSpinyNeurons.jpg" 1628609558 677350 fb6c4622461ac2917f4a666476d47b14 ""
+  "Images/bgnuclei.jpg" 1629106331 367283 9a8479d7b88e2a3d887ae8715aab96e8 ""
   "Images/logounipi.jpg" 1628609558 51467 4d5750886476381f5461a481ba823029 ""
+  "Images/network.png" 1629104916 292035 3d0d97837bdf161985bdd64e3728480f ""
   "Images/striatumrec.jpg" 1628609558 104469 515035c40b2683a7614cce19d73e85c9 ""
-  "Tesi.aux" 1628617268 4076 16fa224619e717a27fb3d0ae0d5dce0b "pdflatex"
-  "Tesi.bbl" 1628617048 1365 0b83b4467b5863f80b97e6a68619e8d4 "bibtex Tesi"
-  "Tesi.out" 1628617268 1113 98d69058f6e86f1ea63c00e7fbb20589 "pdflatex"
-  "Tesi.tex" 1628617267 8663 972bb7fee933aaeb38a208730be6e13c ""
-  "Tesi.toc" 1628617268 1300 3ac071989cfed38411732ce743011dae "pdflatex"
-  "pdfa.xmpi" 1628617268 5042 0ea2cbd9fb23bf90429a68baca97add9 "pdflatex"
+  "Tesi.aux" 1629106902 4949 be845ceb7308f58a9bfdf14f521ef5e8 "pdflatex"
+  "Tesi.bbl" 1629106901 1808 3d33f58284e105fd69351de4813710a7 "bibtex Tesi"
+  "Tesi.out" 1629106902 1113 98d69058f6e86f1ea63c00e7fbb20589 "pdflatex"
+  "Tesi.tex" 1629106680 11002 6fb935de05d997fba22a0d7380bfe5d6 ""
+  "Tesi.toc" 1629106902 1300 34ce5235066c647fc396c456d9cfa0b5 "pdflatex"
+  "pdfa.xmpi" 1629106902 5042 a887b8b0a3f14a6452421bdd66bb554c "pdflatex"
   (generated)
+  "Tesi.pdf"
   "pdfa.xmpi"
+  "Tesi.log"
+  "Tesi.aux"
   "Tesi.toc"
   "Tesi.out"
-  "Tesi.pdf"
-  "Tesi.aux"
-  "Tesi.log"
