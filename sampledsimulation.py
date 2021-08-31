@@ -16,7 +16,7 @@ if __name__ == "__main__":
     iterator = it.product(values_to_iterate, repeat=2)
 
     #list = [K12, K13, K21, K23, K31, K32]
-    values_to_choose = [[fixedval, val[0], fixedval, fixedval, fixedval, val[1]] for val in iterator]
+    values_to_choose = [[val[0], fixedval, fixedval, fixedval, fixedval, val[1]] for val in iterator]
 
     num_subpop1 = 40
     num_subpop2 = 120
