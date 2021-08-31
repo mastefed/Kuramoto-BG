@@ -29,7 +29,7 @@ if __name__ == "__main__":
     kuramotosakaguchi = kurasaka_oscillators(num_subpop1, num_subpop2, num_subpop3)
 
     list_of_variables = [
-    'Val K12', 'Val K13', 'Val K23', 'Val K21', 'Val K31', 'Val K32', 
+    'Val K12', 'Val K13', 'Val K21', 'Val K23', 'Val K31', 'Val K32', 
     'Sync Pop1', 'Sync Time Pop1', 'Sync Pop2', 'Sync Time Pop2', 'Sync Pop3', 'Sync Time Pop3', 'Global Sync', 'Presence of Sub Delta Pop1', 'Presence of Sub Delta Pop2', 'Presence of Sub Delta Pop3', 'Integral of PSD Sync Delta Band Pop1', 'Integral of PSD Sync Delta Band Pop2', 'Integral of PSD Sync Delta Band Pop3', 'Freq Pop1', 'Std Freq Pop1', 'Freq Pop2', 'Std Freq Pop2', 'Freq Pop3', 'Std Freq Pop3'
     ]
     
