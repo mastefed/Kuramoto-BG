@@ -4,32 +4,32 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 
-path = '/Users/federicom/Desktop/datak12k21.csv'
-data = pd.read_csv(path, sep=';')
+path = '/Users/federicom/Desktop/datak12k32.csv'
+data = pd.read_csv(path)
 
 data['Val K12'] = round(data['Val K12'], 1)
-data['Val K21'] = round(data['Val K21'], 1)
+data['Val K32'] = round(data['Val K32'], 1)
 
 data[['Sync Time Pop1', 'Sync Time Pop2', 'Sync Time Pop3']] = data[['Sync Time Pop1', 'Sync Time Pop2', 'Sync Time Pop3']].fillna(np.inf)
 
 
 # La riga qui sotto mi crea una tabella pivot in cui si vede la variazione di Sync Pop1 in base a Val K12 e Val K32
-valPop1 = pd.pivot_table(data[['Val K12', 'Val K21', 'Sync Time Pop1']], values='Sync Time Pop1', index='Val K12', columns='Val K21')
-valPop2 = pd.pivot_table(data[['Val K12', 'Val K21', 'Sync Time Pop2']], values='Sync Time Pop2', index='Val K12', columns='Val K21')
-valPop3 = pd.pivot_table(data[['Val K12', 'Val K21', 'Sync Time Pop3']], values='Sync Time Pop3', index='Val K12', columns='Val K21')
+valPop1 = pd.pivot_table(data[['Val K12', 'Val K32', 'Sync Time Pop1']], values='Sync Time Pop1', index='Val K12', columns='Val K32')
+valPop2 = pd.pivot_table(data[['Val K12', 'Val K32', 'Sync Time Pop2']], values='Sync Time Pop2', index='Val K12', columns='Val K32')
+valPop3 = pd.pivot_table(data[['Val K12', 'Val K32', 'Sync Time Pop3']], values='Sync Time Pop3', index='Val K12', columns='Val K32')
 
-val2Pop1 = pd.pivot_table(data[['Val K12', 'Val K21', 'Sync Pop1']], values='Sync Pop1', index='Val K12', columns='Val K21')
-val2Pop2 = pd.pivot_table(data[['Val K12', 'Val K21', 'Sync Pop2']], values='Sync Pop2', index='Val K12', columns='Val K21')
-val2Pop3 = pd.pivot_table(data[['Val K12', 'Val K21', 'Sync Pop3']], values='Sync Pop3', index='Val K12', columns='Val K21')
-val2glob = pd.pivot_table(data[['Val K12', 'Val K21', 'Global Sync']], values='Global Sync', index='Val K12', columns='Val K21')
+val2Pop1 = pd.pivot_table(data[['Val K12', 'Val K32', 'Sync Pop1']], values='Sync Pop1', index='Val K12', columns='Val K32')
+val2Pop2 = pd.pivot_table(data[['Val K12', 'Val K32', 'Sync Pop2']], values='Sync Pop2', index='Val K12', columns='Val K32')
+val2Pop3 = pd.pivot_table(data[['Val K12', 'Val K32', 'Sync Pop3']], values='Sync Pop3', index='Val K12', columns='Val K32')
+val2glob = pd.pivot_table(data[['Val K12', 'Val K32', 'Global Sync']], values='Global Sync', index='Val K12', columns='Val K32')
 
-val3Pop1 = pd.pivot_table(data[['Val K12', 'Val K21', 'Presence of Sub Delta Pop1']], values='Presence of Sub Delta Pop1', index='Val K12', columns='Val K21')
-val3Pop2 = pd.pivot_table(data[['Val K12', 'Val K21', 'Presence of Sub Delta Pop2']], values='Presence of Sub Delta Pop2', index='Val K12', columns='Val K21')
-val3Pop3 = pd.pivot_table(data[['Val K12', 'Val K21', 'Presence of Sub Delta Pop3']], values='Presence of Sub Delta Pop3', index='Val K12', columns='Val K21')
+val3Pop1 = pd.pivot_table(data[['Val K12', 'Val K32', 'Presence of Sub Delta Pop1']], values='Presence of Sub Delta Pop1', index='Val K12', columns='Val K32')
+val3Pop2 = pd.pivot_table(data[['Val K12', 'Val K32', 'Presence of Sub Delta Pop2']], values='Presence of Sub Delta Pop2', index='Val K12', columns='Val K32')
+val3Pop3 = pd.pivot_table(data[['Val K12', 'Val K32', 'Presence of Sub Delta Pop3']], values='Presence of Sub Delta Pop3', index='Val K12', columns='Val K32')
 
-val4Pop1 = pd.pivot_table(data[['Val K12', 'Val K21', 'Integral of PSD Sync Delta Band Pop1']], values='Integral of PSD Sync Delta Band Pop1', index='Val K12', columns='Val K21')
-val4Pop2 = pd.pivot_table(data[['Val K12', 'Val K21', 'Integral of PSD Sync Delta Band Pop2']], values='Integral of PSD Sync Delta Band Pop2', index='Val K12', columns='Val K21')
-val4Pop3 = pd.pivot_table(data[['Val K12', 'Val K21', 'Integral of PSD Sync Delta Band Pop3']], values='Integral of PSD Sync Delta Band Pop3', index='Val K12', columns='Val K21')
+val4Pop1 = pd.pivot_table(data[['Val K12', 'Val K32', 'Integral of PSD Sync Delta Band Pop1']], values='Integral of PSD Sync Delta Band Pop1', index='Val K12', columns='Val K32')
+val4Pop2 = pd.pivot_table(data[['Val K12', 'Val K32', 'Integral of PSD Sync Delta Band Pop2']], values='Integral of PSD Sync Delta Band Pop2', index='Val K12', columns='Val K32')
+val4Pop3 = pd.pivot_table(data[['Val K12', 'Val K32', 'Integral of PSD Sync Delta Band Pop3']], values='Integral of PSD Sync Delta Band Pop3', index='Val K12', columns='Val K32')
 
 #################################################################
 
@@ -119,17 +119,17 @@ plt.figure("Deltas", figsize=(9,7))
 
 plt.subplot(2,2,1)
 plt.title('Delta Band integral in Sync PSD for Pop 1')
-ax1 = sns.heatmap(val4Pop1, vmin=0., vmax=0.015, cmap='viridis', cbar_kws={"shrink": .9})
+ax1 = sns.heatmap(val4Pop1, vmin=0., vmax=0.006, cmap='viridis', cbar_kws={"shrink": .9})
 ax1.invert_yaxis()
 
 plt.subplot(2,2,2)
 plt.title('Delta Band integral in Sync PSD for Pop 2')
-ax1 = sns.heatmap(val4Pop2, vmin=0., vmax=0.015, cmap='viridis', cbar_kws={"shrink": .9})
+ax1 = sns.heatmap(val4Pop2, vmin=0., vmax=0.006, cmap='viridis', cbar_kws={"shrink": .9})
 ax1.invert_yaxis()
 
 plt.subplot(2,2,3)
 plt.title('Delta Band integral in Sync PSD for Pop 3')
-ax1 = sns.heatmap(val4Pop3, vmin=0., vmax=0.015, cmap='viridis', cbar_kws={"shrink": .9})
+ax1 = sns.heatmap(val4Pop3, vmin=0., vmax=0.006, cmap='viridis', cbar_kws={"shrink": .9})
 ax1.invert_yaxis()
 
 plt.subplots_adjust(wspace=0.5, hspace=0.5)
