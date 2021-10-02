@@ -2,13 +2,14 @@ from kurasaka import *
 import time
 
 if __name__ == "__main__":
+    
     t0 = time.time()
     
     num_subpop1 = 4
     num_subpop2 = 12
     num_subpop3 = 2
     N = num_subpop1 + num_subpop2 + num_subpop3
-    couplingconstants = [5., 5., 5., 5., 5., 5.]
+    couplingconstants = [37., 5., 5., 20., 5., 5.]
     
     t_start = 0.
     t_end = 10.
@@ -36,32 +37,21 @@ if __name__ == "__main__":
     
     lowDeltaDetection, deltaIntegration = kuramotosakaguchi.detectDeltas(psdssync)
     
-    print(lowDeltaDetection)
-    print(deltaIntegration)
-    exit()
+    print("Regarding the oscillations of the Synchronization parameters:")
+    print(f"Presence of sub deltas oscillations: {lowDeltaDetection}")
+    print(f"Value of the integral in the Delta band: {deltaIntegration}\n")
     
     globsync, globordparam = kuramotosakaguchi.findglobalorderparameter(times, ordparams)
     
     frequencies_array, mean_frequencies, std_frequencies = kuramotosakaguchi.findFrequenciesMeanStd(t_points, times, phasesevolution, syncs)
-    
-    plt.figure('Frequencies')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Frequencies')
-    times2 = numpy.arange(0.01, 10, 0.01)
-    plt.plot(times2, frequencies_array[:, : num_subpop1], 'bo', ms=0.3)
-    plt.plot(times2, frequencies_array[:, num_subpop1 : num_subpop1 + num_subpop2], 'gs', ms=0.3)
-    plt.plot(times2, frequencies_array[:, num_subpop1 + num_subpop2 :], 'r^', ms=0.3)
-    plt.plot(times2, mean_frequencies[:,0], 'darkblue', lw=1, label='Mean Pop. 1 Frequency')
-    plt.plot(times2, mean_frequencies[:,1], 'darkgreen', lw=1, label='Mean Pop. 2 Frequency')
-    plt.plot(times2, mean_frequencies[:,2], 'darkred', lw=1, label='Mean Pop. 3 Frequency')
-    plt.legend()
+    kuramotosakaguchi.printFrequenciesPlot(num_subpop1, num_subpop2, frequencies_array, mean_frequencies)
     
     print(f'Population 1: The frequency at which the PSD is maximal is {freqsmax[0]}')
     print(f'Population 2: The frequency at which the PSD is maximal is {freqsmax[1]}')
     print(f'Population 3: The frequency at which the PSD is maximal is {freqsmax[2]}\n')
     
     kuramotosakaguchi.printsyncparam(times, syncs, globsync)
-    
+    kuramotosakaguchi.printRealImagPartOrderParameter(ordparams)
     plt.show()
 
     print(f'Mean Sync for SuPop 1: {numpy.mean(syncs[0][300:])}')
