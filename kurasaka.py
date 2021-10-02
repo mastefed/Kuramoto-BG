@@ -7,6 +7,7 @@ from scipy.stats import cauchy
 from scipy.signal import find_peaks, welch
 
 from sdeint import itoint
+import os
 
 class kurasaka_oscillators:
     def __init__(self, num_subpop1, num_subpop2, num_subpop3):
@@ -471,6 +472,19 @@ class kurasaka_oscillators:
             print(f'Population 3 can\'t be considered synchronized, its mean frequency across the simulation is  {numpy.mean(populations_mean_frequencies[:,2][300:])}\n')
         
         return oscillators_frequencies, populations_mean_frequencies, populations_std_of_frequencies
+    
+    def printFrequenciesPlot(self, num_subpop1, num_subpop2, frequencies_array, mean_frequencies):
+        plt.figure('Frequencies')
+        plt.xlabel('Time [s]')
+        plt.ylabel('Frequencies')
+        times2 = numpy.arange(0.01, 10, 0.01)
+        plt.plot(times2, frequencies_array[:, : num_subpop1], 'bo', ms=0.3)
+        plt.plot(times2, frequencies_array[:, num_subpop1 : num_subpop1 + num_subpop2], 'gs', ms=0.3)
+        plt.plot(times2, frequencies_array[:, num_subpop1 + num_subpop2 :], 'r^', ms=0.3)
+        plt.plot(times2, mean_frequencies[:,0], 'darkblue', lw=1, label='Mean Pop. 1 Frequency')
+        plt.plot(times2, mean_frequencies[:,1], 'darkgreen', lw=1, label='Mean Pop. 2 Frequency')
+        plt.plot(times2, mean_frequencies[:,2], 'darkred', lw=1, label='Mean Pop. 3 Frequency')
+        plt.legend()
         
     def printsyncparam(self, times, syncs, globsync, save=False, savepath=None):
         plt.figure(f'{self.N} Oscillators Sync', figsize=(13,6))
@@ -529,20 +543,122 @@ class kurasaka_oscillators:
             pass
 
     def printRealImagPartOrderParameter(self, orderparameters):
+        if not os.path.exists('/Users/federicom/Desktop/ImmaginiPop1/'):
+            os.makedirs('/Users/federicom/Desktop/ImmaginiPop1/')
+            
+        if not os.path.exists('/Users/federicom/Desktop/ImmaginiPop2/'):
+            os.makedirs('/Users/federicom/Desktop/ImmaginiPop2/')
+            
+        if not os.path.exists('/Users/federicom/Desktop/ImmaginiPop3/'):
+            os.makedirs('/Users/federicom/Desktop/ImmaginiPop3/')
+        
+        ordparamPop1 = orderparameters[0]
+        ordparamPop2 = orderparameters[1]
+        ordparamPop3 = orderparameters[2]
+        
+        realPartOrdparamPop1 = numpy.real(ordparamPop1)
+        imagPartOrdparamPop1 = numpy.imag(ordparamPop1)
+        
+        realPartOrdparamPop2 = numpy.real(ordparamPop2)
+        imagPartOrdparamPop2 = numpy.imag(ordparamPop2)
+        
+        realPartOrdparamPop3 = numpy.real(ordparamPop3)
+        imagPartOrdparamPop3 = numpy.imag(ordparamPop3)
+        
         plt.rc('text', usetex=True)
-        plt.figure("RealImagPartOrderParameter")
-        plt.xlabel(r"$\rho_1 \cos(\Psi_1)$")
-        plt.ylabel(r"$\rho_1 \sin(\Psi_1)$")
-        plt.xlim((-1,1))
-        plt.ylim((-1,1))
-        ordparam_pop1 = orderparameters[0]
-        partreale_ordparam_pop1 = numpy.real(ordparam_pop1)
-        partimag_ordparam_pop1 = numpy.imag(ordparam_pop1)
-        plt.plot(partreale_ordparam_pop1, partimag_ordparam_pop1)
-        plt.scatter(partreale_ordparam_pop1[0], partimag_ordparam_pop1[0], c='red', s=100, label='Initial point')
-        plt.scatter(partreale_ordparam_pop1[-1], partimag_ordparam_pop1[-1], c='green', s=100, label='Final point')
-        plt.legend()
+        
+        intervalLenght = int(len(ordparamPop1)/50)
+        spanning = numpy.arange(0, int(len(ordparamPop1)), int(len(ordparamPop1)/50))
 
+        
+        for numIter, interval in enumerate(spanning):
+            fig1 = plt.figure(f"RealImagPartOrderParameter Pop1 -- Part {numIter}")
+            ax1 = plt.subplot(111)
+            ax1.set_title(f"Population 1 - Order Parameter, Time Interval: [{(interval)/100}, {(interval + intervalLenght)/100}] s")
+            ax1.set_xlabel(r"$\rho_1 \cos(\Psi_1)$")
+            ax1.set_ylabel(r"$\rho_1 \sin(\Psi_1)$")
+            ax1.set_xlim((-1,1))
+            ax1.set_ylim((-1,1)) 
+            ax1.scatter(realPartOrdparamPop1[0], imagPartOrdparamPop1[0], c='red', s=100, label='Initial point')
+            ax1.scatter(realPartOrdparamPop1[-1], imagPartOrdparamPop1[-1], c='green', s=100, label='Final point')
+            
+            partialOrdparamPop1 = ordparamPop1[interval : interval + intervalLenght]
+            partialRealPartOrdparamPop1 = numpy.real(partialOrdparamPop1)
+            partialImagPartOrdparamPop1 = numpy.imag(partialOrdparamPop1)
+            
+            ax1.plot(partialRealPartOrdparamPop1, partialImagPartOrdparamPop1, lw=.7, ls=":")
+            ax1.scatter(partialRealPartOrdparamPop1, partialImagPartOrdparamPop1, marker="x")
+            for numb, i, j in zip(numpy.arange(1, len(partialRealPartOrdparamPop1) + 1), partialRealPartOrdparamPop1, partialImagPartOrdparamPop1):
+                corr = -0.07
+                ax1.annotate(str(numb),  xy=(i + corr, j + corr), color="blue")
+            
+            ax1.legend()
+            
+            destination = f"/Users/federicom/Desktop/ImmaginiPop1/RealImagPartOrderParameter Pop1 -- Part {numIter}.jpeg"
+            plt.savefig(destination, dpi=300)
+            plt.close(fig1)
+            
+        intervalLenght = int(len(ordparamPop2)/50)
+        spanning = numpy.arange(0, int(len(ordparamPop2)), int(len(ordparamPop2)/50))
+        
+        for numIter, interval in enumerate(spanning):
+            fig2 = plt.figure(f"RealImagPartOrderParameter Pop2 -- Part {numIter}")
+            ax2 = plt.subplot(111)
+            ax2.set_title(f"Population 2 - Order Parameter, Time Interval: [{(interval)/100}, {(interval + intervalLenght)/100}] s")
+            ax2.set_xlabel(r"$\rho_2 \cos(\Psi_2)$")
+            ax2.set_ylabel(r"$\rho_2 \sin(\Psi_2)$")
+            ax2.set_xlim((-1,1))
+            ax2.set_ylim((-1,1)) 
+            ax2.scatter(realPartOrdparamPop2[0], imagPartOrdparamPop2[0], c='red', s=100, label='Initial point')
+            ax2.scatter(realPartOrdparamPop2[-1], imagPartOrdparamPop2[-1], c='green', s=100, label='Final point')
+            
+            partialOrdparamPop2 = ordparamPop2[interval : interval + intervalLenght]
+            partialRealPartOrdparamPop2 = numpy.real(partialOrdparamPop2)
+            partialImagPartOrdparamPop2 = numpy.imag(partialOrdparamPop2)
+            
+            ax2.plot(partialRealPartOrdparamPop2, partialImagPartOrdparamPop2, lw=.7, ls=":")
+            ax2.scatter(partialRealPartOrdparamPop2, partialImagPartOrdparamPop2, marker="x")
+            for numb, i, j in zip(numpy.arange(1, len(partialRealPartOrdparamPop2) + 1), partialRealPartOrdparamPop2, partialImagPartOrdparamPop2):
+                corr = -0.07
+                ax2.annotate(str(numb),  xy=(i + corr, j + corr), color="blue")
+            
+            ax2.legend()
+            
+            destination = f"/Users/federicom/Desktop/ImmaginiPop2/RealImagPartOrderParameter Pop2 -- Part {numIter}.jpeg"
+            plt.savefig(destination, dpi=300)
+            plt.close(fig2)
+
+                
+        intervalLenght = int(len(ordparamPop3)/50)
+        spanning = numpy.arange(0, int(len(ordparamPop3)), int(len(ordparamPop3)/50))
+        
+        for numIter, interval in enumerate(spanning):
+            fig3 = plt.figure(f"RealImagPartOrderParameter Pop3 -- Part {numIter}")
+            ax3 = plt.subplot(111)
+            ax3.set_title(f"Population 3 - Order Parameter, Time Interval: [{(interval)/100}, {(interval + intervalLenght)/100}] s")
+            ax3.set_xlabel(r"$\rho_3 \cos(\Psi_3)$")
+            ax3.set_ylabel(r"$\rho_3 \sin(\Psi_3)$")
+            ax3.set_xlim((-1,1))
+            ax3.set_ylim((-1,1)) 
+            ax3.scatter(realPartOrdparamPop3[0], imagPartOrdparamPop3[0], c='red', s=100, label='Initial point')
+            ax3.scatter(realPartOrdparamPop3[-1], imagPartOrdparamPop3[-1], c='green', s=100, label='Final point')
+            
+            partialOrdparamPop3 = ordparamPop3[interval : interval + intervalLenght]
+            partialRealPartOrdparamPop3 = numpy.real(partialOrdparamPop3)
+            partialImagPartOrdparamPop3 = numpy.imag(partialOrdparamPop3)
+            
+            ax3.plot(partialRealPartOrdparamPop3, partialImagPartOrdparamPop3, lw=.7, ls=":")
+            ax3.scatter(partialRealPartOrdparamPop3, partialImagPartOrdparamPop3, marker="x")
+            for numb, i, j in zip(numpy.arange(1, len(partialRealPartOrdparamPop3) + 1), partialRealPartOrdparamPop3, partialImagPartOrdparamPop3):
+                corr = -0.07
+                ax3.annotate(str(numb),  xy=(i + corr, j + corr), color="blue")
+            
+            ax3.legend()
+            
+            destination = f"/Users/federicom/Desktop/ImmaginiPop3/RealImagPartOrderParameter Pop3 -- Part {numIter}.jpeg"
+            plt.savefig(destination, dpi=300)
+            plt.close(fig3)
+        
     def animateoscillators(self, times, time_start, time_end, phaseevolution, syncs, globsync, orderparameter, globorderparameter):     
         def animate_function(i):
             phases = phaseevolution[i:i+1]
@@ -624,9 +740,9 @@ class kurasaka_oscillators:
         plt.suptitle(f'{self.N} Oscillators')
         ax1 = plt.subplot(121)
         ax2 = plt.subplot(122)
-        self.animated = animation.FuncAnimation(fig, animate_function, frames = len(phaseevolution), interval=0.1)
+        animated = animation.FuncAnimation(fig, animate_function, frames = len(phaseevolution), interval=0.1)
 
-        return self.animated
+        return animated
 
     def saveanimation(self, myanimation, save_path):
         print('\nVideo Processing started!')
@@ -634,6 +750,3 @@ class kurasaka_oscillators:
         writer = Writer(fps=120, metadata=dict(artist='F. V. Mastellone'), bitrate=1800)
         myanimation.save(save_path, writer=writer)
         print('Task finished.')
-
-    def showplots(self):
-        plt.show()
