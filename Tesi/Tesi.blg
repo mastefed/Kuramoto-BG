@@ -4,46 +4,46 @@ The top-level auxiliary file: Tesi.aux
 The style file: unsrt.bst
 Database file #1: biblio.bib
 Warning--entry type for "bgnuclei" isn't style-file defined
---line 11 of file biblio.bib
-You've used 8 entries,
+--line 50 of file biblio.bib
+You've used 9 entries,
             1791 wiz_defined-function locations,
-            496 strings with 4916 characters,
-and the built_in function-call counts, 1715 in all, are:
-= -- 141
-> -- 81
+            505 strings with 5175 characters,
+and the built_in function-call counts, 1939 in all, are:
+= -- 164
+> -- 85
 < -- 0
-+ -- 31
-- -- 23
-* -- 122
-:= -- 290
-add.period$ -- 23
-call.type$ -- 8
-change.case$ -- 8
++ -- 33
+- -- 24
+* -- 141
+:= -- 324
+add.period$ -- 26
+call.type$ -- 9
+change.case$ -- 9
 chr.to.int$ -- 0
-cite$ -- 8
-duplicate$ -- 67
-empty$ -- 171
-format.name$ -- 23
-if$ -- 371
+cite$ -- 9
+duplicate$ -- 76
+empty$ -- 195
+format.name$ -- 24
+if$ -- 419
 int.to.chr$ -- 0
-int.to.str$ -- 8
-missing$ -- 7
-newline$ -- 42
-num.names$ -- 8
-pop$ -- 14
+int.to.str$ -- 9
+missing$ -- 8
+newline$ -- 47
+num.names$ -- 9
+pop$ -- 15
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 30
+skip$ -- 33
 stack$ -- 0
-substring$ -- 121
-swap$ -- 8
+substring$ -- 146
+swap$ -- 9
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 15
-width$ -- 9
-write$ -- 85
+while$ -- 18
+width$ -- 10
+write$ -- 96
 (There was 1 warning)
