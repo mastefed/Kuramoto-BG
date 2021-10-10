@@ -8,7 +8,8 @@ if __name__ == "__main__":
     num_subpop1 = 4
     num_subpop2 = 12
     num_subpop3 = 2
-    N = num_subpop1 + num_subpop2 + num_subpop3
+    
+    #                    k12 k13 k21 k23 k31 k32 
     couplingconstants = [37., 5., 5., 20., 5., 5.]
     
     t_start = 0.
