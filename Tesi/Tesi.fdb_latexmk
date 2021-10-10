@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex Tesi"] 1632936737 "Tesi.aux" "Tesi.bbl" "Tesi" 1632989923
+["bibtex Tesi"] 1633872644 "Tesi.aux" "Tesi.bbl" "Tesi" 1633872645
   "/usr/local/texlive/2021/texmf-dist/bibtex/bst/base/unsrt.bst" 1292289607 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "Tesi.aux" 1632989923 9563 56fd039f5952d7430da8844c542ace61 "pdflatex"
-  "biblio.bib" 1632553511 7066 424256bd227e5480b0b90df929bfd232 ""
+  "Tesi.aux" 1633872645 10555 b16c273c6bf0d278373ab8cead6ca93e "pdflatex"
+  "biblio.bib" 1633585600 10772 7ac89ff7db1bed5f85a7d0c6914f578c ""
   (generated)
-  "Tesi.bbl"
   "Tesi.blg"
-["pdflatex"] 1632989922 "Tesi.tex" "Tesi.pdf" "Tesi" 1632989923
+  "Tesi.bbl"
+["pdflatex"] 1633872644 "Tesi.tex" "Tesi.pdf" "Tesi" 1633872645
   "/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2021/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2021/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm" 1136768653 2520 53e01eef820ca829e42c1333c3fd02b9 ""
@@ -107,6 +107,7 @@
   "/usr/local/texlive/2021/texmf-dist/tex/latex/base/inputenc.sty" 1601675358 5050 0d3b77275060ca09a40635b830c3c904 ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/caption/caption.sty" 1603745920 51746 e89c4da670ba533e6ab38e045ce6d1d9 ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/caption/caption3.sty" 1603745920 67929 d50ae850e1d9604065e8337a75a41029 ""
+  "/usr/local/texlive/2021/texmf-dist/tex/latex/enumitem/enumitem.sty" 1561238569 51697 f8f08183cd2080d9d18a41432d651dfb ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/environ/environ.sty" 1399239813 4378 f429f0da968c278653359293040a8f52 ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty" 1579991033 13886 d1306dcf79a944f6988e688c1785f9ce ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/everyshi/everyshi.sty" 1606256234 2368 ef01f98551a0f54407358b67f8a6c5e1 ""
@@ -155,6 +156,7 @@
   "/usr/local/texlive/2021/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1575674187 9715 b051d5b493d9fe5f4bc251462d039e5f ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/tocbibind/tocbibind.sty" 1287012853 8927 46f54e33fc9cef24f78ab3bc811cb63f ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/tools/calc.sty" 1580683321 10216 5efd55f2010055e7b7875afd6a75be82 ""
+  "/usr/local/texlive/2021/texmf-dist/tex/latex/tools/multicol.sty" 1580683321 31532 04852e45d7c17cb384689d2f83b628d3 ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/trimspaces/trimspaces.sty" 1253232110 1380 971a51b00a14503ddf754cab24c3f209 ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/url/url.sty" 1388531844 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "/usr/local/texlive/2021/texmf-dist/tex/latex/wrapfig/wrapfig.sty" 1137111090 26220 3701aebf80ccdef248c0c20dd062fea9 ""
@@ -173,16 +175,16 @@
   "Images/network.png" 1629104916 292035 3d0d97837bdf161985bdd64e3728480f ""
   "Images/striatumrec.jpg" 1628609558 104469 515035c40b2683a7614cce19d73e85c9 ""
   "Images/systemsoscillatorstheory2.png" 1632989746 97546 44f42f96b09b1f3bef78f287961918c4 ""
-  "Tesi.aux" 1632989923 9563 56fd039f5952d7430da8844c542ace61 "pdflatex"
-  "Tesi.bbl" 1632936738 1993 c6e7ab3d0101522408805e70438ece60 "bibtex Tesi"
-  "Tesi.out" 1632989923 1214 d688c8e0fe7cc31ec89a61dd4b6728c2 "pdflatex"
-  "Tesi.tex" 1632989921 19361 919dcf79841e1f72faa4484312dce0aa ""
-  "Tesi.toc" 1632989923 1409 80e985fba60c8f7e3c397c0cbe926719 "pdflatex"
-  "pdfa.xmpi" 1632989922 5042 a312c88fa9c7f47a34e83d58630e74ce "pdflatex"
+  "Tesi.aux" 1633872645 10555 b16c273c6bf0d278373ab8cead6ca93e "pdflatex"
+  "Tesi.bbl" 1633872644 2363 9a80233f7914f5d1cd3fdb02004a6cb0 "bibtex Tesi"
+  "Tesi.out" 1633872645 1214 d688c8e0fe7cc31ec89a61dd4b6728c2 "pdflatex"
+  "Tesi.tex" 1633872642 22891 00daf3bc4a20bc15b722f504558f8903 ""
+  "Tesi.toc" 1633872645 1409 e1aa576c0407d9eb91a5850e8e118fc3 "pdflatex"
+  "pdfa.xmpi" 1633872645 5042 bcec36888369442754c1ce871425645d "pdflatex"
   (generated)
   "Tesi.aux"
   "Tesi.toc"
-  "Tesi.out"
-  "pdfa.xmpi"
   "Tesi.log"
   "Tesi.pdf"
+  "Tesi.out"
+  "pdfa.xmpi"

@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{evol}
 S.~Grillner, B.~Robertson, and M.~Stephenson-Jones.
@@ -50,5 +50,16 @@ D.~Milardi, A.~Quartarone, A.~Bramanti, G.~Anastasi, S.~Bertino, G.~A. Basile,
 Erwin B~Jr Montgomery.
 \newblock Basal ganglia physiology and pathophysiology: a reappraisal.
 \newblock {\em Parkinsonism Relat Disord}, 13(8):455--465, Dec 2007.
+
+\bibitem{fahn}
+Stanley Fahn.
+\newblock Classification of movement disorders.
+\newblock {\em Movement Disorders}, 26(6):947--957, 2011.
+
+\bibitem{vissani}
+Matteo Vissani, Ioannis~U Isaias, and Alberto Mazzoni.
+\newblock Deep brain stimulation: a review of the open neural engineering
+  challenges.
+\newblock {\em Journal of Neural Engineering}, 17(5):051002, oct 2020.
 
 \end{thebibliography}
