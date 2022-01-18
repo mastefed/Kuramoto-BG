@@ -60,10 +60,10 @@ if __name__ == "__main__":
     
     for i, kval in enumerate(np.linspace(5,40,6)):
     #  k = [k11, k12, k13,       [kaa, kab, kac
-    #          k21, k22, k23,     kba, kbb, kbc
-    #          k31, k32, k33]     kca, kcb, kcc]
+    #       k21, k22, k23,        kba, kbb, kbc
+    #       k31, k32, k33]        kca, kcb, kcc]
         k = [
-            .5, 5, 5, 
+            .5, kval, kval, 
             kval, .5, kval, 
             5, 5, .2
             ]
@@ -71,8 +71,8 @@ if __name__ == "__main__":
         
         ax1 = fig1.add_subplot(2,3,i+1)
         ax2 = fig2.add_subplot(2,3,i+1)
-        ax1.set_title(fr'$\cos(\phi_c - \phi_b)$ = {cos32}, $k_{{bc}}, k_{{ba}}$={kval}')
-        ax2.set_title(fr'$\cos(\phi_c - \phi_a)$ = {cos31}, $k_{{bc}}, k_{{ba}}$={kval}')
+        ax1.set_title(fr'$\cos(\phi_c - \phi_b)$ = {cos32}, $k_{{ab}}, k_{{ba}}, k_{{ac}}, k_{{bc}}$={kval}')
+        ax2.set_title(fr'$\cos(\phi_c - \phi_a)$ = {cos31}, $k_{{ab}}, k_{{ba}}, k_{{ac}}, k_{{bc}}$={kval}')
         
         rho1 = rho(cp2p1_1, cp3p1, cos32, k[0], k[1], k[2], k[3], k[4], k[5])[0]
         deriv1 = drho1dc31(cp2p1_1, k[0], k[1], k[2], k[3], k[4], k[7])

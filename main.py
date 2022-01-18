@@ -5,12 +5,12 @@ if __name__ == "__main__":
     
     t0 = time.time()
     
-    num_subpop1 = 4
-    num_subpop2 = 12
-    num_subpop3 = 2
+    num_subpop1 = 40
+    num_subpop2 = 120
+    num_subpop3 = 20
     
     #                    k12 k13 k21 k23 k31 k32 
-    couplingconstants = [37., 5., 5., 20., 5., 5.]
+    couplingconstants = [35.5, 5., 5., 25., 5., 5.]
     
     t_start = 0.
     t_end = 10.
