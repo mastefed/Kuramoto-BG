@@ -4,7 +4,7 @@ import matplotlib.animation as animation
 
 from scipy.integrate import odeint, simps
 from scipy.stats import cauchy
-from scipy.signal import find_peaks, welch
+from scipy.signal import welch
 
 from sdeint import itoint
 import os
@@ -26,7 +26,6 @@ class kurasaka_oscillators:
         self.Narray = [N1, N2, N3]
         
         self.reproducible_rng = numpy.random.default_rng(42)
-        self.notreproducible_rng = numpy.random.default_rng()
 
     def settimes(self, time_start, time_end, time_points):
         """ Generates the array of time points to integrate
